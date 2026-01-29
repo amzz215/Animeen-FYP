@@ -1,0 +1,317 @@
+
+/* resets default spacing and sizing of page so video fits correctly */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+/* allows full-viewport layout */
+ html, body {
+    width: 100%;
+    height: 100%;
+}
+/* Ensures page isn't pushed below nav */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+/* Nav bar stays at the top, above video */
+.static-control-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+/* Darkens nav bar after */
+section::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+}
+/* Darkens only video under the nav bar and allows for smooth transition */
+.static-control-bar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.20);
+    transition: background 0.3s ease;
+    z-index: -1;
+}
+/* Darkens nav bar even more after scroll */
+.static-control-bar.scrolled::before {
+    background: rgba(0, 0, 0, 0.3);
+}
+/* Keeps nav content above video on the nav bar */
+.static-control-bar > * {
+    position: relative;
+    z-index: 1;
+}
+.logo {
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
+}
+.nav-links {
+    display: flex;
+    gap: 18px;
+    margin-left: auto;
+}
+
+.nav-links a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.nav-links a:hover {
+  color: #fff;
+}
+/* Keeps page content above video on the page */
+.search-container{
+    position: relative;
+    z-index: 2;
+    margin-top: 200px;
+    display: flex;
+    justify-content: center;
+}
+.search-bar{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 12px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.search-input{
+    width: min(520px, 70vw);
+    padding: 12px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    outline: none;
+}
+
+.search-input::placeholder{
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.search-btn,
+.filter-btn{
+    padding: 12px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    cursor: pointer;
+}
+
+.search-btn:hover,
+.filter-btn:hover{
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.drawer-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 19;
+}
+
+.drawer-overlay.open{
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.filter-drawer{
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(420px, 90vw);
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+    z-index: 20;
+    color: #fff;
+}
+
+.filter-drawer.open{
+    transform: translateX(0);
+}
+
+.drawer-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.drawer-close{
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.drawer-content{
+    padding: 16px;
+    display: grid;
+    gap: 16px;
+}
+
+.filter-item{
+    display: grid;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.genre-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+}
+
+.genre-pill{
+    cursor: pointer;
+}
+
+.genre-pill input{
+    display: none;
+}
+
+.genre-pill span{
+    display: block;
+    padding: 8px 10px;
+    border-radius: 999px;
+    text-align: center;
+    font-size: 13px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.10);
+    color: #fff;
+    transition: background 0.2s ease, border 0.2s ease;
+}
+
+.genre-pill input:checked + span{
+    background: rgba(255,255,255,0.28);
+    border-color: rgba(255,255,255,0.45);
+}
+
+.radio-row{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.radio-pill{
+    cursor: pointer;
+}
+
+.radio-pill input{
+    display: none;
+}
+
+.radio-pill span{
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.10);
+    color: #fff;
+}
+
+.radio-pill input:checked + span{
+    background: rgba(255,255,255,0.28);
+    border-color: rgba(255,255,255,0.45);
+}
+
+.year-row{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.year-row select{
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.10);
+    color: #fff;
+    outline: none;
+}
+
+.drawer-actions{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.clear-filters,
+.apply-filters{
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    cursor: pointer;
+}
+
+.clear-filters:hover,
+.apply-filters:hover{
+    background: rgba(255, 255, 255, 0.18);
+}
+/* Ensures video is the background and is behind everything */
+section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 0;
+}
+/* Perfectly fills and centers the video to the screen */
+section video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: translate(-50%, -50%);
+}
+
+footer {
+    margin-top: auto;
+    padding: 5px;
+    text-align: center;
+    background-color: #222;
+    color: #fff;
+}
