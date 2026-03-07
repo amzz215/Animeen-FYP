@@ -1,55 +1,78 @@
+<?php
+require_once __DIR__ . "/AnimeenDbConn.php";
+
+$genres = [];
+
+try {
+
+$stat = $pdo->query("
+SELECT DISTINCT TRIM(
+    SUBSTRING_INDEX(SUBSTRING_INDEX(genres, ',', numbers.n), ',', -1)
+) AS genre
+FROM anime
+JOIN (
+    SELECT 1 n UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5
+    UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10
+) numbers
+ON CHAR_LENGTH(genres) - CHAR_LENGTH(REPLACE(genres, ',', '')) >= numbers.n - 1
+ORDER BY genre
+");
+
+$genres = $stat->fetchAll(PDO::FETCH_COLUMN);
+
+} catch(PDOException $ex){
+$genres = [];
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Genres</title>
-
-  <link rel="stylesheet" href="GenrePage.css">
+<meta charset="UTF-8">
+<title>Genres</title>
+<link rel="stylesheet" href="GenrePage.css">
 </head>
 
 <body>
 
-  <!-- Background video -->
-  <section>
-    <video src="video/naruto.mp4" loop muted autoplay></video>
-  </section>
+<section>
+<video src="video/naruto.mp4" loop muted autoplay></video>
+</section>
 
-  <!-- Navbar -->
-  <div class="static-control-bar">
-    <div class="logo">Animeen</div>
-    <div class="nav-links">
-      <a href="Home.php">Home</a>
-      <a href="login.php">Login</a>
-      <a href="RankingPage.php">Top Anime</a>
-      <a href="GenrePage.php">Genres</a>
-      <a href="#">About</a>
-    </div>
-  </div>
+<div class="static-control-bar">
+<div class="logo">Animeen</div>
 
-  <!-- Page content -->
-  <main class="page">
-    <h1 class="page-title">All Genres</h1>
+<div class="nav-links">
+<a href="Home.php">Home</a>
+<a href="login.php">Login</a>
+<a href="RankingPage.php">Top Anime</a>
+<a href="GenrePage.php">Genres</a>
+</div>
+</div>
 
-    <div class="grid genre-grid">
-      <a class="genre-card" href="TopGenreAnime.php?genre=action">Action</a>
-      <a class="genre-card" href="TopGenreAnime.php?genre=adventure">Adventure</a>
-      <a class="genre-card" href="TopGenreAnime.php?genre=comedy">Comedy</a>
-      <a class="genre-card" href="TopGenreAnime.php?genre=drama">Drama</a>
-      <a class="genre-card" href="TopGenreAnime.php?genre=fantasy">Fantasy</a>
-      <a class="genre-card" href="TopGenreAnime.php?genre=horror">Horror</a>
-      <a class="genre-card" href="TopGenreAnime.php?genre=mecha">Mecha</a>
-      <a class="genre-card" href="TopGenreAnime.php?genre=music">Music</a>
-      <a class="genre-card" href="TopGenreAnime.php?genre=mystery">Mystery</a>
-      <a class="genre-card" href="TopGenreAnime.php?genre=romance">Romance</a>
-      <a class="genre-card" href="TopGenreAnime.php?genre=sci-fi">Sci-Fi</a>
-      <a class="genre-card" href="TopGenreAnime.php?genre=slice-of-life">Slice of Life</a>
-      <a class="genre-card" href="TopGenreAnime.php?genre=sports">Sports</a>
-      <a class="genre-card" href="TopGenreAnime.php?genre=thriller">Thriller</a>
-    </div>
-  </main>
+<main class="page">
+
+<h1 class="page-title">All Genres</h1>
+
+<div class="grid genre-grid">
+
+<?php foreach($genres as $genre): 
+
+$slug = strtolower(str_replace(" ", "-", $genre));
+?>
+
+<a class="genre-card"
+href="TopGenreAnime.php?genre=<?php echo urlencode($slug); ?>">
+
+<?php echo htmlspecialchars($genre); ?>
+
+</a>
+
+<?php endforeach; ?>
+
+</div>
+
+</main>
 
 </body>
 </html>
-
