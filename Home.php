@@ -1,3 +1,43 @@
+<?php
+require_once "AnimeenDbConn.php";
+
+/**
+ * Pagination defaults (override per page)
+ */
+$limit = isset($_GET["limit"]) ? (int)$_GET["limit"] : 100;
+if ($limit <= 0) $limit = 100;
+if ($limit > 200) $limit = 200; // hard cap to protect performance
+
+$page = isset($_GET["page"]) ? (int)$_GET["page"] : 1;
+if ($page < 1) $page = 1;
+
+$offset = ($page - 1) * $limit;
+
+$sql = "
+  SELECT id, title, main_picture_url, mean, rank
+  FROM anime
+  WHERE mean IS NOT NULL
+  ORDER BY mean DESC
+  LIMIT :limit OFFSET :offset
+";
+
+$stmt = $pdo->prepare($sql);
+$stmt->bindValue(":limit", $limit, PDO::PARAM_INT);
+$stmt->bindValue(":offset", $offset, PDO::PARAM_INT);
+$stmt->execute();
+
+$animeList = $stmt->fetchAll();
+
+/**
+ * Total rows for pagination UI
+ * 
+ */
+
+$countStmt = $pdo->query("SELECT COUNT(*) AS c FROM anime WHERE mean IS NOT NULL");
+$totalRows = (int)$countStmt->fetch()["c"];
+$totalPages = (int)ceil($totalRows / $limit);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,8 +67,14 @@
     </div>
 
     <div class="search-container">
-  <form class="search-bar" id="searchForm">
-    <input class="search-input" type="text" placeholder="Search anime..." />
+  <form class="search-bar" id="searchForm" method="get" action="Recommendations.php">
+    <input
+      class="search-input"
+      type="text"
+      name="title"
+      placeholder="Search anime..."
+      required
+    >
 
     <button class="search-btn" type="submit">Search</button>
     <button class="filter-btn" type="button" id="openFilters">Filter</button>

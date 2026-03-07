@@ -1,15 +1,14 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box; }
 
 html, body {
   width: 100%;
   height: 100%;
 }
 
-/* Background video layer */
+/* Background */
 section {
   position: fixed;
   inset: 0;
@@ -28,17 +27,17 @@ section video {
 }
 
 section::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.25);
-  pointer-events: none;
+  content:"";
+  position:absolute;
+  inset:0;
+  background: rgba(0,0,0,0.25);
+  pointer-events:none;
 }
 
 /* Navbar */
 .static-control-bar {
   position: fixed;
-  top: 0;
+  top: 0; 
   left: 0;
   width: 100%;
   height: 70px;
@@ -49,34 +48,35 @@ section::after {
   justify-content: space-between;
   padding: 0 24px;
 
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0,0,0,0.25);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
 }
 
-.logo {
-  color: #fff;
-  font-weight: 700;
-  font-size: 18px;
+.logo { 
+  color:#fff; 
+  font-weight: 700; 
+  font-size: 18px; 
 }
 
-.nav-links {
-  display: flex;
-  gap: 18px;
+.nav-links { 
+  display: flex; 
+  gap: 18px; 
 }
 
-.nav-links a {
-  color: rgba(255, 255, 255, 0.85);
+.nav-links a,
+.nav-links a:visited {
+  color: rgba(255,255,255,0.85);
   text-decoration: none;
   font-size: 14px;
 }
 
-.nav-links a:hover {
-  color: #fff;
+.nav-links a:hover { 
+  color:#fff; 
 }
 
-/* Page layout */
+/* Page */
 .page {
   position: relative;
   z-index: 2;
@@ -84,7 +84,7 @@ section::after {
 }
 
 .page-title {
-  color: #fff;
+  color:#fff;
   font-size: 28px;
   margin-bottom: 18px;
 }
@@ -96,7 +96,7 @@ section::after {
   gap: 18px;
 }
 
-/* Card */
+/* Anime card */
 .anime-card {
   border-radius: 22px;
   overflow: hidden;
@@ -110,11 +110,10 @@ section::after {
   transition: transform 0.18s ease;
 }
 
-.anime-card:hover {
-  transform: translateY(-4px);
+.anime-card:hover { 
+  transform: translateY(-4px); 
 }
 
-/* Poster */
 .poster {
   width: 100%;
   aspect-ratio: 2 / 3;
@@ -128,13 +127,12 @@ section::after {
   display: block;
 }
 
-/* Meta */
 .meta {
   padding: 14px 14px 10px;
 }
 
 .title {
-  color: #fff;
+  color:#fff;
   font-size: 16px;
   line-height: 1.25;
   margin-bottom: 6px;
@@ -156,8 +154,8 @@ section::after {
 .btn {
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.10);
-  color: #fff;
-  cursor: pointer;
+  color:#fff;
+  cursor:pointer;
   border-radius: 999px;
   padding: 10px 12px;
   font-weight: 600;
@@ -177,6 +175,23 @@ section::after {
   padding: 10px 0;
 }
 
+/* Back button */
+.back-row{ 
+  margin-top: 16px; 
+}
+
+.back-btn{
+  display: inline-block;
+  padding: 12px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  color:#fff;
+
+  background: rgba(0,0,0,0.20);
+  border: 1px solid rgba(255,255,255,0.16);
+  backdrop-filter: blur(14px);
+}
+
 /* show selected states */
 .anime-card[data-liked="1"] .btn-like {
   background: rgba(255, 255, 255, 0.22);
@@ -194,7 +209,7 @@ section::after {
 }
 
 .poster-link {
-    display: block;
-    color: inherit;
-    text-decoration: none;
+  display: block;
+  text-decoration: none;
+  color: inherit;
 }

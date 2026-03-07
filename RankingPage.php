@@ -1,3 +1,57 @@
+<?php
+require_once __DIR__ . "/AnimeenDbConn.php";
+
+$limit = 100;
+$page = isset($_GET["page"]) ? (int)$_GET["page"] : 1;
+
+if ($page < 1) {
+    $page = 1;
+}
+
+$offset = ($page - 1) * $limit;
+
+$animeList = [];
+$error = "";
+$totalPages = 1;
+
+try {
+    $countStmt = $pdo->prepare("
+        SELECT COUNT(*) AS total
+        FROM anime
+        WHERE rank IS NOT NULL
+    ");
+    $countStmt->execute();
+    $totalRows = (int)$countStmt->fetch()["total"];
+
+    $totalPages = max(1, (int)ceil($totalRows / $limit));
+
+    if ($page > $totalPages) {
+        $page = $totalPages;
+        $offset = ($page - 1) * $limit;
+    }
+
+    $stmt = $pdo->prepare("
+        SELECT
+            id,
+            title,
+            main_picture_url,
+            studios,
+            rank
+        FROM anime
+        WHERE rank IS NOT NULL
+        ORDER BY rank ASC
+        LIMIT :limit OFFSET :offset
+    ");
+    $stmt->bindValue(":limit", $limit, PDO::PARAM_INT);
+    $stmt->bindValue(":offset", $offset, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $animeList = $stmt->fetchAll();
+
+} catch (PDOException $ex) {
+    $error = "Failed to load anime from the database.";
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,75 +65,77 @@
 
 <body>
 
-    <!-- Background video -->
-    <section>
-        <video src="video/naruto.mp4" loop muted autoplay></video>
-    </section>
+<section>
+    <video src="video/naruto.mp4" loop muted autoplay></video>
+</section>
 
-    <!-- Navigation bar -->
-    <div class="static-control-bar">
-        <div class="logo">Animeen</div>
-        <div class="nav-links">
-            <a href="Home.php">Home</a>
-            <a href="login.php">Login</a>
-            <a href="GenrePage.php">Genres</a>
-            <a href="#">About</a>
-        </div>
+<div class="static-control-bar">
+    <div class="logo">Animeen</div>
+    <div class="nav-links">
+        <a href="Home.php">Home</a>
+        <a href="login.php">Login</a>
+        <a href="GenrePage.php">Genres</a>
+        <a href="#">About</a>
     </div>
+</div>
+
 <main class="page">
     <h1 class="page-title">Browse Highest Rated Anime</h1>
 
+    <?php if (!empty($error)): ?>
+        <p class="sub" style="color: white; margin-bottom: 20px;">
+            <?php echo htmlspecialchars($error); ?>
+        </p>
+    <?php endif; ?>
+
     <div class="grid">
-      <!-- Card -->
-      <article class="anime-card" data-id="1">
-        <div class="poster">
-          <img src="images/wolf-children.jpg" alt="Ookami Kodomo no Ame to Yuki">
-        </div>
+        <?php foreach ($animeList as $anime): ?>
+            <article class="anime-card" data-id="<?php echo (int)$anime["id"]; ?>">
 
-        <div class="meta">
-          <h3 class="title">Ookami Kodomo no Ame to Yuki</h3>
-          <p class="sub">Madhouse • 2012</p>
-        </div>
+                <a href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>" class="poster-link">
+                    <div class="poster">
+                        <img
+                            src="<?php echo htmlspecialchars(!empty($anime["main_picture_url"]) ? $anime["main_picture_url"] : "images/placeholder1.jpg"); ?>"
+                            alt="<?php echo htmlspecialchars($anime["title"]); ?>"
+                        >
+                    </div>
+                </a>
 
-        <div class="actions">
-          <button class="btn btn-watchlist" type="button">+ Watchlist</button>
-          <button class="btn btn-like" type="button" aria-label="Like">👍</button>
-          <button class="btn btn-dislike" type="button" aria-label="Dislike">👎</button>
-        </div>
-      </article>
+                <div class="meta">
+                    <h3 class="title"><?php echo htmlspecialchars($anime["title"]); ?></h3>
+                    <p class="sub">
+                        <?php echo htmlspecialchars($anime["studios"] ?? "Unknown Studio"); ?>
+                        • Rank: <?php echo htmlspecialchars((string)$anime["rank"]); ?>
+                    </p>
+                </div>
 
-      <!-- Duplicate cards (example) -->
-      <article class="anime-card" data-id="2">
-        <div class="poster">
-          <img src="video/spiderman.jpg" alt="spiderman">
-        </div>
-        <div class="meta">
-          <h3 class="title">Your Name</h3>
-          <p class="sub">CoMix Wave • 2016</p>
-        </div>
-        <div class="actions">
-          <button class="btn btn-watchlist" type="button">+ Watchlist</button>
-          <button class="btn btn-like" type="button" aria-label="Like">👍</button>
-          <button class="btn btn-dislike" type="button" aria-label="Dislike">👎</button>
-        </div>
-      </article>
-
-      <article class="anime-card" data-id="3">
-        <div class="poster">
-          <img src="images/spirited-away.jpg" alt="Spirited Away">
-        </div>
-        <div class="meta">
-          <h3 class="title">Spirited Away</h3>
-          <p class="sub">Ghibli • 2001</p>
-        </div>
-        <div class="actions">
-          <button class="btn btn-watchlist" type="button">+ Watchlist</button>
-          <button class="btn btn-like" type="button" aria-label="Like">👍</button>
-          <button class="btn btn-dislike" type="button" aria-label="Dislike">👎</button>
-        </div>
-      </article>
+                <div class="actions">
+                    <button class="btn btn-watchlist" type="button">+ Watchlist</button>
+                    <button class="btn btn-like" type="button">👍</button>
+                    <button class="btn btn-dislike" type="button">👎</button>
+                </div>
+            </article>
+        <?php endforeach; ?>
     </div>
-  </main>
-    <script src="RankingPage.js"></script>
+
+    <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-top:30px; flex-wrap:wrap;">
+
+        <?php if ($page > 1): ?>
+            <a class="btn" href="RankingPage.php?page=<?php echo $page - 1; ?>" style="text-decoration:none;">← Previous</a>
+        <?php endif; ?>
+
+        <span class="sub" style="color:white;">
+            Page <?php echo $page; ?> of <?php echo $totalPages; ?>
+        </span>
+
+        <?php if ($page < $totalPages): ?>
+            <a class="btn" href="RankingPage.php?page=<?php echo $page + 1; ?>" style="text-decoration:none;">Next →</a>
+        <?php endif; ?>
+
+    </div>
+</main>
+
+<script src="RankingPage.js"></script>
 </body>
 </html>
+
