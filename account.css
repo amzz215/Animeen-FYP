@@ -323,3 +323,8 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+.btn.active {
+    background: rgba(255, 255, 255, 0.28);
+    border-color: rgba(255, 255, 255, 0.45);
+}

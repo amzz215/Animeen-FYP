@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once __DIR__ . "/AnimeenDbConn.php";
 
 $animeId = isset($_GET["anime"]) ? (int)$_GET["anime"] : 0;
@@ -59,6 +60,8 @@ $numUsers = $anime["num_scoring_users"] ?? "N/A";
 <link rel="stylesheet" href="RankingPage.css">
 </head>
 
+<script src="interactions.js"></script>
+
 <body>
 
 <section>
@@ -74,6 +77,28 @@ $numUsers = $anime["num_scoring_users"] ?? "N/A";
         <a href="login.php">Login</a>
     </div>
 </div>
+
+<?php if (isset($_SESSION["interaction_success"])): ?>
+<div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
+    <div style="background-color:green; padding:15px 30px; color:white; border:1px solid green; font-weight:bold; border-radius:5px; text-align:center;">
+        <?php
+        echo htmlspecialchars($_SESSION["interaction_success"]);
+        unset($_SESSION["interaction_success"]);
+        ?>
+    </div>
+</div>
+<?php endif; ?>
+
+<?php if (isset($_SESSION["interaction_error"])): ?>
+<div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
+    <div style="background-color:#c0392b; padding:15px 30px; color:white; border:1px solid #c0392b; font-weight:bold; border-radius:5px; text-align:center;">
+        <?php
+        echo htmlspecialchars($_SESSION["interaction_error"]);
+        unset($_SESSION["interaction_error"]);
+        ?>
+    </div>
+</div>
+<?php endif; ?>
 
 <main class="page">
     <div class="grid" style="grid-template-columns: 320px 1fr;">
@@ -116,7 +141,7 @@ $numUsers = $anime["num_scoring_users"] ?? "N/A";
                 <?php echo nl2br(htmlspecialchars($desc)); ?>
             </p>
 
-            <div class="actions" style="margin-top:16px;">
+            <div class="actions" data-id="<?php echo (int)$animeId; ?>" style="margin-top:16px;">
                 <button class="btn btn-watchlist" type="button">+ Watchlist</button>
                 <button class="btn btn-like" type="button">👍 Like</button>
                 <button class="btn btn-dislike" type="button">👎 Dislike</button>

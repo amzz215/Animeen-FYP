@@ -46,6 +46,8 @@ if ($title !== "") {
     <link rel="stylesheet" href="RankingPage.css">
 </head>
 
+<script src="interactions.js"></script>
+
 <body>
 
 <section>
@@ -61,6 +63,28 @@ if ($title !== "") {
         <a href="#">About</a>
     </div>
 </div>
+
+<?php if (isset($_SESSION["interaction_success"])): ?>
+<div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
+    <div style="background-color:green; padding:15px 30px; color:white; border:1px solid green; font-weight:bold; border-radius:5px; text-align:center;">
+        <?php
+        echo htmlspecialchars($_SESSION["interaction_success"]);
+        unset($_SESSION["interaction_success"]);
+        ?>
+    </div>
+</div>
+<?php endif; ?>
+
+<?php if (isset($_SESSION["interaction_error"])): ?>
+<div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
+    <div style="background-color:#c0392b; padding:15px 30px; color:white; border:1px solid #c0392b; font-weight:bold; border-radius:5px; text-align:center;">
+        <?php
+        echo htmlspecialchars($_SESSION["interaction_error"]);
+        unset($_SESSION["interaction_error"]);
+        ?>
+    </div>
+</div>
+<?php endif; ?>
 
 <main class="page">
     <h1 class="page-title">

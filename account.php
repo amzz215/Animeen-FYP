@@ -30,23 +30,54 @@ try {
     $user = null;
 }
 
-$watchlistedAnime = [
-    ["id" => 1, "title" => "Violet Evergarden", "studio" => "Kyoto Animation"],
-    ["id" => 2, "title" => "Your Name", "studio" => "CoMix Wave Films"],
-    ["id" => 3, "title" => "Spirited Away", "studio" => "Studio Ghibli"]
-];
+$watchlistedAnime = [];
+$likedAnime = [];
+$dislikedAnime = [];
 
-$likedAnime = [
-    ["id" => 4, "title" => "Attack on Titan", "studio" => "Wit Studio"],
-    ["id" => 5, "title" => "Steins;Gate", "studio" => "White Fox"],
-    ["id" => 6, "title" => "Haikyuu!!", "studio" => "Production I.G"]
-];
+try {
 
-$dislikedAnime = [
-    ["id" => 7, "title" => "DB", "studio" => "Studio A"],
-    ["id" => 8, "title" => "Naruto", "studio" => "Studio B"],
-    ["id" => 9, "title" => "One Piece", "studio" => "Studio C"]
-];
+    /* WATCHLISTED */
+    $stmt = $pdo->prepare("
+        SELECT a.id, a.title
+        FROM interactions i
+        JOIN anime a ON i.anime_id = a.id
+        WHERE i.uid = ? AND i.watchlisted = 1
+        ORDER BY a.title
+    ");
+    $stmt->execute([$uid]);
+    $watchlistedAnime = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+    /* LIKED */
+    $stmt = $pdo->prepare("
+        SELECT a.id, a.title
+        FROM interactions i
+        JOIN anime a ON i.anime_id = a.id
+        WHERE i.uid = ? AND i.liked = 1
+        ORDER BY a.title
+    ");
+    $stmt->execute([$uid]);
+    $likedAnime = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+    /* DISLIKED */
+    $stmt = $pdo->prepare("
+        SELECT a.id, a.title
+        FROM interactions i
+        JOIN anime a ON i.anime_id = a.id
+        WHERE i.uid = ? AND i.disliked = 1
+        ORDER BY a.title
+    ");
+    $stmt->execute([$uid]);
+    $dislikedAnime = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+
+    $watchlistedAnime = [];
+    $likedAnime = [];
+    $dislikedAnime = [];
+
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -133,7 +164,7 @@ $dislikedAnime = [
                             <a class="anime-link" href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>">
                                 <?php echo htmlspecialchars($anime["title"]); ?>
                             </a>
-                            <span class="anime-sub"><?php echo htmlspecialchars($anime["studio"]); ?></span>
+                            <span class="anime-sub"><?php echo htmlspecialchars($anime["studios"]); ?></span>
                         </div>
 
                         <div class="anime-row-actions">
@@ -154,7 +185,7 @@ $dislikedAnime = [
                             <a class="anime-link" href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>">
                                 <?php echo htmlspecialchars($anime["title"]); ?>
                             </a>
-                            <span class="anime-sub"><?php echo htmlspecialchars($anime["studio"]); ?></span>
+                            <span class="anime-sub"><?php echo htmlspecialchars($anime["studios"]); ?></span>
                         </div>
 
                         <div class="anime-row-actions">
@@ -175,7 +206,7 @@ $dislikedAnime = [
                             <a class="anime-link" href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>">
                                 <?php echo htmlspecialchars($anime["title"]); ?>
                             </a>
-                            <span class="anime-sub"><?php echo htmlspecialchars($anime["studio"]); ?></span>
+                            <span class="anime-sub"><?php echo htmlspecialchars($anime["studios"]); ?></span>
                         </div>
 
                         <div class="anime-row-actions">

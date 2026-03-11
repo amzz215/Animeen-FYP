@@ -108,25 +108,6 @@ try {
                 <?php endforeach; ?>
             </div>
         </div>
-
-        <div class="filter-item">
-            <span>Type</span>
-            <div class="radio-row">
-                <label class="radio-pill">
-                    <input type="radio" name="filterType" value="" checked>
-                    <span>Any</span>
-                </label>
-                <label class="radio-pill">
-                    <input type="radio" name="filterType" value="tv">
-                    <span>TV</span>
-                </label>
-                <label class="radio-pill">
-                    <input type="radio" name="filterType" value="movie">
-                    <span>Movie</span>
-                </label>
-            </div>
-        </div>
-
         <div class="filter-item">
             <span>Year range</span>
             <div class="year-row">
