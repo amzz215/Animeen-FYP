@@ -122,7 +122,7 @@ $numUsers = $anime["num_scoring_users"] ?? "N/A";
                 <button class="btn btn-dislike" type="button">👎 Dislike</button>
             </div>
 
-            <a href="Recommendations.php" style="display:block;margin-top:14px;">← Back to Top Anime</a>
+            <!-- <a href="Recommendations.php" style="display:block;margin-top:14px;">← Back to Top Anime</a> -->
         </div>
 
     </div>

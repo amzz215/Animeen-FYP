@@ -1,8 +1,8 @@
 window.addEventListener("scroll", () => {
-    const nav = document.querySelector(".static-control-bar");
-    if (!nav) return;
+  const nav = document.querySelector(".static-control-bar");
+  if (!nav) return;
 
-    nav.classList.toggle("scrolled", window.scrollY > 0);
+  nav.classList.toggle("scrolled", window.scrollY > 0);
 });
 
 const openBtn = document.getElementById("openFilters");
@@ -17,12 +17,14 @@ const clearBtn = document.getElementById("clearFilters");
 const applyBtn = document.getElementById("applyFilters");
 
 function openDrawer() {
+  if (!drawer || !overlay) return;
   drawer.classList.add("open");
   overlay.classList.add("open");
   drawer.setAttribute("aria-hidden", "false");
 }
 
 function closeDrawer() {
+  if (!drawer || !overlay) return;
   drawer.classList.remove("open");
   overlay.classList.remove("open");
   drawer.setAttribute("aria-hidden", "true");
@@ -52,6 +54,8 @@ function fillYearSelects() {
 }
 
 function clampYearRange() {
+  if (!startYearEl || !endYearEl) return;
+
   const start = parseInt(startYearEl.value, 10);
   const end = parseInt(endYearEl.value, 10);
 
@@ -65,7 +69,10 @@ endYearEl?.addEventListener("change", clampYearRange);
 
 clearBtn?.addEventListener("click", () => {
   document.querySelectorAll(".genre-pill input").forEach(cb => cb.checked = false);
-  document.querySelectorAll('input[name="filterType"]').forEach(r => r.checked = (r.value === ""));
+  document.querySelectorAll('input[name="filterType"]').forEach(r => {
+    r.checked = (r.value === "");
+  });
+
   if (startYearEl) startYearEl.value = "";
   if (endYearEl) endYearEl.value = "";
 });
@@ -78,9 +85,20 @@ applyBtn?.addEventListener("click", () => {
   const startYear = startYearEl?.value || "";
   const endYear = endYearEl?.value || "";
 
-  console.log({ genres, type, startYear, endYear });
+  const params = new URLSearchParams();
 
-  closeDrawer();
+  if (type) params.set("type", type);
+  if (startYear) params.set("startYear", startYear);
+  if (endYear) params.set("endYear", endYear);
+
+  let targetUrl = "RankingPage.php";
+
+  if (genres.length > 0) {
+    targetUrl = "TopGenreAnime.php";
+    params.set("genre", genres[0]);
+  }
+
+  window.location.href = `${targetUrl}?${params.toString()}`;
 });
 
 fillYearSelects();

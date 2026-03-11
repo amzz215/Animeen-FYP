@@ -21,7 +21,7 @@ if (isset($_POST["register"])) {
         exit;
     }
 
-    require_once("AnimeenDbConn.php");
+    require_once __DIR__ . "/AnimeenDbConn.php";
 
     try {
 
@@ -54,19 +54,15 @@ if (isset($_POST["register"])) {
         $_SESSION["uid"] = $uid;
         $_SESSION["username"] = $username;
         $_SESSION["email"] = $email;
-
         $_SESSION["loggedin"] = "Welcome $username! Your account has been created.";
 
-        header("Location: Home.php");
+        header("Location: HomeUser.php");
         exit;
 
-    }
-    catch (PDOException $ex) {
-
+    } catch (PDOException $ex) {
         $_SESSION["systemfailure"] = "Database error occurred.";
         header("Location: RegistrationPage.php");
         exit;
-
     }
 }
 ?>

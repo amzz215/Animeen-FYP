@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-// if (isset($_SESSION["uid"])) {
-//     header("Location: HomeUser.php");
+// if (!isset($_SESSION["uid"])) {
+//     header("Location: Home.php");
 //     exit;
 // }
 
@@ -55,7 +55,7 @@ try {
     <div class="nav-links">
         <a href="RankingPage.php">Top Anime</a>
         <a href="GenrePage.php">Genres</a>
-        <a href="login.php">Login</a>
+        <a href="account.php">Account</a>
         <a href="#">About</a>
     </div>
 </div>
@@ -109,7 +109,23 @@ try {
             </div>
         </div>
 
-  
+        <div class="filter-item">
+            <span>Type</span>
+            <div class="radio-row">
+                <label class="radio-pill">
+                    <input type="radio" name="filterType" value="" checked>
+                    <span>Any</span>
+                </label>
+                <label class="radio-pill">
+                    <input type="radio" name="filterType" value="tv">
+                    <span>TV</span>
+                </label>
+                <label class="radio-pill">
+                    <input type="radio" name="filterType" value="movie">
+                    <span>Movie</span>
+                </label>
+            </div>
+        </div>
 
         <div class="filter-item">
             <span>Year range</span>
@@ -119,17 +135,14 @@ try {
             </div>
         </div>
 
-    </div>
+        <div class="drawer-actions">
+            <button class="clear-filters" type="button" id="clearFilters">Clear</button>
+            <button class="apply-filters" type="button" id="applyFilters">Apply</button>
+        </div>
 
-    <div class="drawer-actions">
-        <button class="clear-filters" type="button" id="clearFilters">Clear</button>
-        <button class="apply-filters" type="button" id="applyFilters">Apply</button>
     </div>
 </aside>
 
-<!-- <footer class="footer">
-    <p>&copy; Animeen 2026. All rights reserved.</p>
-</footer> -->
 <script src="Home.js"></script>
 </body>
 </html>

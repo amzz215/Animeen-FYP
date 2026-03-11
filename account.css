@@ -1,0 +1,325 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-x: hidden;
+    font-family: Arial, sans-serif;
+}
+
+/* navbar */
+.static-control-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.static-control-bar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.20);
+    transition: background 0.3s ease;
+    z-index: -1;
+}
+
+.static-control-bar > * {
+    position: relative;
+    z-index: 1;
+}
+
+.logo {
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 18px;
+    margin-left: auto;
+}
+
+.nav-links a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.nav-links a:hover {
+    color: #fff;
+}
+
+/* background */
+.video-background {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.video-background video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: translate(-50%, -50%);
+}
+
+.video-background::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.10);
+    pointer-events: none;
+}
+
+/* page content */
+.account-page {
+    position: relative;
+    z-index: 2;
+    width: min(1780px, calc(100% - 32px));
+    margin: 130px auto 40px;
+    display: grid;
+    gap: 22px;
+}
+
+/* panels */
+.account-panel {
+    padding: 22px;
+    border-radius: 30px;
+    background: rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.20);
+    min-width: 0;
+}
+
+.panel-title {
+    color: #fff;
+    font-size: 28px;
+    margin-bottom: 18px;
+    line-height: 1.1;
+}
+
+/* account details */
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+.detail-box {
+    padding: 16px 18px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+
+.detail-label {
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.detail-value {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    word-break: break-word;
+}
+
+/* actions */
+.account-actions {
+    margin-top: 22px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.account-actions form {
+    margin: 0;
+}
+
+.action-btn {
+    display: inline-block;
+    padding: 12px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.danger-btn {
+    background: rgba(160, 35, 35, 0.78);
+}
+
+.danger-btn:hover {
+    background: rgba(180, 40, 40, 0.92);
+}
+
+/* anime sections grid */
+.anime-sections-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    align-items: start;
+}
+
+.anime-section-panel {
+    min-width: 0;
+}
+
+/* anime list */
+.anime-list {
+    display: grid;
+    gap: 16px;
+}
+
+.anime-row {
+    display: grid;
+    gap: 14px;
+    padding: 18px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    min-width: 0;
+}
+
+.anime-meta {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+
+.anime-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+    word-break: break-word;
+}
+
+.anime-link:hover {
+    text-decoration: underline;
+}
+
+.anime-sub {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 14px;
+    word-break: break-word;
+}
+
+.anime-row-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.mini-btn {
+    width: 100%;
+    min-width: 0;
+    padding: 12px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.mini-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.danger-mini-btn {
+    background: rgba(160, 35, 35, 0.78);
+}
+
+.danger-mini-btn:hover {
+    background: rgba(180, 40, 40, 0.92);
+}
+
+.empty-text {
+    color: rgba(255, 255, 255, 0.82);
+}
+
+/* responsive */
+@media (max-width: 1100px) {
+    .anime-sections-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .account-page {
+        width: min(100% - 20px, 1780px);
+        margin: 100px auto 24px;
+        gap: 18px;
+    }
+
+    .account-panel {
+        padding: 20px;
+        border-radius: 22px;
+    }
+
+    .panel-title {
+        font-size: 24px;
+    }
+
+    .anime-sections-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .account-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .action-btn,
+    .mini-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .anime-row-actions {
+        grid-template-columns: 1fr;
+    }
+}

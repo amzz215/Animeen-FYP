@@ -25,9 +25,9 @@ if (isset($_POST["login"])) {
                 $_SESSION["uid"] = $user["uid"];
                 $_SESSION["username"] = $user["username"];
                 $_SESSION["email"] = $user["email"];
-                $_SESSION["loggedin"] = "Successfully logged in, enjoy.";
+                $_SESSION["loggedin"] = "Welcome," . $user["username"] . "!";
 
-                header("Location: Home.php");
+                header("Location: HomeUser.php");
                 exit;
             } else {
                 $_SESSION["failedlogin"] = "Incorrect password. Please try again or click forgotten password.";
@@ -74,17 +74,6 @@ if (isset($_POST["login"])) {
             <a href="#">About</a>
         </div>
     </div>
-
-    <?php if (isset($_SESSION["loggedin"])): ?>
-        <div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
-            <div style="background-color:green; padding:15px 30px; color:white; border:1px solid green; font-weight:bold; border-radius:5px; text-align:center;">
-                <?php
-                echo htmlspecialchars($_SESSION["loggedin"]);
-                unset($_SESSION["loggedin"]);
-                ?>
-            </div>
-        </div>
-    <?php endif; ?>
 
     <?php if (isset($_SESSION["failedlogin"])): ?>
         <div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
