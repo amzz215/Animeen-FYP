@@ -71,6 +71,28 @@ try {
         </div>
     <?php endif; ?>
 
+    <?php if (isset($_SESSION["success"])): ?>
+        <div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
+            <div style="background-color:green; padding:15px 30px; color:white; border:1px solid green; font-weight:bold; border-radius:5px; text-align:center;">
+                <?php
+                echo htmlspecialchars($_SESSION["success"]);
+                unset($_SESSION["success"]);
+                ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION["success_l"])): ?>
+        <div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
+            <div style="background-color:green; padding:15px 30px; color:white; border:1px solid green; font-weight:bold; border-radius:5px; text-align:center;">
+                <?php
+                echo htmlspecialchars($_SESSION["success_l"]);
+                unset($_SESSION["success_l"]);
+                ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
 <div class="search-container">
     <form class="search-bar" id="searchForm" method="get" action="Recommendations.php">
         <input
