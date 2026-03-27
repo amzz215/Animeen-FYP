@@ -70,7 +70,7 @@ if ($genreSlug !== "") {
 <div class="static-control-bar">
     <div class="logo">Animeen</div>
     <div class="nav-links">
-        <a href="Home.php">Home</a>
+        <a href="HomeUser.php">Home</a>
         <a href="login.php">Login</a>
         <a href="RankingPage.php">Top Anime</a>
         <a href="GenrePage.php">Genres</a>

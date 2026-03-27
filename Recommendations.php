@@ -1,34 +1,93 @@
 <?php
+session_start();
 require_once __DIR__ . "/AnimeenDbConn.php";
 
 $title = isset($_GET["title"]) ? trim($_GET["title"]) : "";
+$genres = isset($_GET["genres"]) && is_array($_GET["genres"]) ? $_GET["genres"] : [];
+
 $results = [];
 $error = "";
 $suggestions = [];
+$fallbackMessage = "";
 
-if ($title !== "") {
+$cleanGenres = [];
+
+foreach ($genres as $genre) {
+    $genre = trim($genre);
+    if ($genre !== "") {
+        $cleanGenres[] = $genre;
+    }
+}
+
+function runRecommendations($title, $genres = [])
+{
     $python = "python";
     $script = __DIR__ . DIRECTORY_SEPARATOR . "CosineSim.py";
 
     $command = escapeshellcmd($python) . " "
              . escapeshellarg($script)
              . " --title " . escapeshellarg($title)
-             . " --k 12";
+             . " --k 250";
+
+    if (!empty($genres)) {
+        $command .= " --genres " . escapeshellarg(implode("@@", $genres));
+    }
 
     $output = shell_exec($command);
 
     if ($output === null || trim($output) === "") {
-        $error = "Couldn't return recommendation, try again later please.";
-    } else {
-        $data = json_decode($output, true);
+        return [
+            "valid" => false,
+            "ok" => false,
+            "results" => [],
+            "suggestions" => [],
+            "error" => "Couldn't return recommendation, try again later please."
+        ];
+    }
 
-        if (!is_array($data)) {
-            $error = "Invalid recommendation, couldn't show.";
-        } elseif (!empty($data["ok"])) {
-            $results = $data["results"] ?? [];
+    $data = json_decode(trim($output), true);
+
+    if (!is_array($data)) {
+        return [
+            "valid" => false,
+            "ok" => false,
+            "results" => [],
+            "suggestions" => [],
+            "error" => "Invalid recommendation, couldn't show."
+        ];
+    }
+
+    return [
+        "valid" => true,
+        "ok" => !empty($data["ok"]),
+        "results" => $data["results"] ?? [],
+        "suggestions" => $data["suggestions"] ?? [],
+        "error" => $data["error"] ?? "Recommendation search failed."
+    ];
+}
+
+if ($title !== "") {
+    $response = runRecommendations($title, $cleanGenres);
+
+    if ($response["valid"] && $response["ok"] && !empty($response["results"])) {
+        $results = $response["results"];
+    } else {
+        $usedGenreFilter = !empty($cleanGenres);
+
+        if ($usedGenreFilter) {
+            $fallback = runRecommendations($title, []);
+
+            if ($fallback["valid"] && $fallback["ok"]) {
+                $results = $fallback["results"];
+                $suggestions = $fallback["suggestions"];
+                $fallbackMessage = "Sorry, couldn't find any recommendations matching your preference, here’s what we got instead.";
+            } else {
+                $error = $fallback["error"];
+                $suggestions = $fallback["suggestions"];
+            }
         } else {
-            $error = $data["error"] ?? "Recommendation search failed.";
-            $suggestions = $data["suggestions"] ?? [];
+            $error = $response["error"];
+            $suggestions = $response["suggestions"];
         }
     }
 } else {
@@ -42,12 +101,8 @@ if ($title !== "") {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recommendations</title>
-
-    <link rel="stylesheet" href="RankingPage.css">
+    <link rel="stylesheet" href="RankingPage.css?v=<?php echo time(); ?>">
 </head>
-
-<script src="interactions.js"></script>
-
 <body>
 
 <section>
@@ -59,37 +114,45 @@ if ($title !== "") {
     <div class="nav-links">
         <a href="Home.php">Home</a>
         <a href="login.php">Login</a>
+        <a href="RankingPage.php">Top Anime</a>
         <a href="GenrePage.php">Genres</a>
-        <a href="#">About</a>
     </div>
 </div>
 
-<?php if (isset($_SESSION["interaction_success"])): ?>
-<div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
-    <div style="background-color:green; padding:15px 30px; color:white; border:1px solid green; font-weight:bold; border-radius:5px; text-align:center;">
-        <?php
-        echo htmlspecialchars($_SESSION["interaction_success"]);
-        unset($_SESSION["interaction_success"]);
-        ?>
-    </div>
-</div>
-<?php endif; ?>
+<div id="interactionMessageWrap"
+     style="
+        display:none;
+        position:fixed;
+        top:90px;
+        left:50%;
+        transform:translateX(-50%);
+        z-index:9999;
+        justify-content:center;
+        align-items:center;
+     ">
 
-<?php if (isset($_SESSION["interaction_error"])): ?>
-<div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
-    <div style="background-color:#c0392b; padding:15px 30px; color:white; border:1px solid #c0392b; font-weight:bold; border-radius:5px; text-align:center;">
-        <?php
-        echo htmlspecialchars($_SESSION["interaction_error"]);
-        unset($_SESSION["interaction_error"]);
-        ?>
+    <div id="interactionMessageBox"
+         style="
+            padding:15px 30px;
+            color:white;
+            font-weight:bold;
+            border-radius:5px;
+            text-align:center;
+            min-width:250px;
+         ">
     </div>
 </div>
-<?php endif; ?>
 
 <main class="page">
     <h1 class="page-title">
         Top Recommendations<?php echo $title !== "" ? " for " . htmlspecialchars($title) : ""; ?>
     </h1>
+
+    <?php if ($fallbackMessage !== ""): ?>
+        <p class="sub" style="margin-bottom: 18px; color: rgba(255,255,255,0.9);">
+            <?php echo htmlspecialchars($fallbackMessage); ?>
+        </p>
+    <?php endif; ?>
 
     <?php if ($error !== ""): ?>
         <p class="sub" style="margin-bottom: 18px; color: rgba(255,255,255,0.9);">
@@ -145,6 +208,7 @@ if ($title !== "") {
     </div>
 </main>
 
-<script src="RankingPage.js"></script>
+<script src="interactions.js?v=<?php echo time(); ?>"></script>
+<script src="RankingPage.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

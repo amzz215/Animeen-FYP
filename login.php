@@ -71,7 +71,6 @@ if (isset($_POST["login"])) {
             <a href="Home.php">Home</a>
             <a href="RankingPage.php">Top Anime</a>
             <a href="GenrePage.php">Genres</a>
-            <a href="#">About</a>
         </div>
     </div>
 

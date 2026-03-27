@@ -95,9 +95,25 @@ def build_model():
     return df, X
 
 # -------------------------
-# 5) Recommend
+# 5) Genre filter helper
 # -------------------------
-def recommend(df, X, title: str, k: int = 200):
+def has_all_selected_genres(anime_genres: str, selected_genres):
+    anime_parts = [g.strip().lower() for g in str(anime_genres).split(",") if g.strip()]
+    anime_set = set(anime_parts)
+
+    for genre in selected_genres:
+        if genre.strip().lower() not in anime_set:
+            return False
+
+    return True
+
+# -------------------------
+# 6) Recommend
+# -------------------------
+def recommend(df, X, title: str, k: int = 200, selected_genres=None):
+    if selected_genres is None:
+        selected_genres = []
+
     # exact match first
     idxs = df.index[df[TITLE_COL].str.lower() == title.lower()]
 
@@ -124,6 +140,9 @@ def recommend(df, X, title: str, k: int = 200):
     cand = cand[cand["franchise_key"] != query_fk]
     cand = cand.drop_duplicates(subset="franchise_key", keep="first")
 
+    if selected_genres:
+        cand = cand[cand[GENRE_COL].apply(lambda g: has_all_selected_genres(g, selected_genres))]
+
     cols = [
         ID_COL, TITLE_COL, IMAGE_COL,
         "mean", "rank", "num_scoring_users",
@@ -138,25 +157,31 @@ def recommend(df, X, title: str, k: int = 200):
     }
 
 # -------------------------
-# 6) Main
+# 7) Main
 # -------------------------
 def main():
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument("--title", required=True)
-        parser.add_argument("--k", type=int, default=12)
+        parser.add_argument("--k", type=int, default=50)
+        parser.add_argument("--genres", default="")
         args = parser.parse_args()
 
+        selected_genres = []
+
+        if args.genres:
+            selected_genres = [g.strip() for g in args.genres.split("@@") if g.strip()]
+
         df, X = build_model()
-        payload = recommend(df, X, args.title, args.k)
-        print(json.dumps(payload, ensure_ascii=False))
+        payload = recommend(df, X, args.title, args.k, selected_genres)
+        print(json.dumps(payload))
 
     except Exception as e:
         print(json.dumps({
             "ok": False,
             "error": str(e),
             "results": []
-        }, ensure_ascii=False))
+        }))
 
 if __name__ == "__main__":
     main()

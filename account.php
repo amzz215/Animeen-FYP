@@ -21,62 +21,6 @@ if (isset($_POST["logout"])) {
     exit;
 }
 
-/* REMOVE FROM ACCOUNT SECTIONS */
-if (isset($_POST["remove_action"], $_POST["anime_id"])) {
-    $animeId = (int) $_POST["anime_id"];
-    $removeAction = $_POST["remove_action"];
-
-    if ($animeId > 0) {
-        try {
-            $stmt = $pdo->prepare("
-                SELECT liked, disliked, watchlisted
-                FROM interactions
-                WHERE uid = ? AND anime_id = ?
-                LIMIT 1
-            ");
-            $stmt->execute([$uid, $animeId]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($row) {
-                $liked = (int) $row["liked"];
-                $disliked = (int) $row["disliked"];
-                $watchlisted = (int) $row["watchlisted"];
-
-                if ($removeAction === "remove_watchlist") {
-                    $watchlisted = 0;
-                }
-
-                if ($removeAction === "remove_like") {
-                    $liked = 0;
-                }
-
-                if ($removeAction === "remove_dislike") {
-                    $disliked = 0;
-                }
-
-                if ($liked === 0 && $disliked === 0 && $watchlisted === 0) {
-                    $stmt = $pdo->prepare("
-                        DELETE FROM interactions
-                        WHERE uid = ? AND anime_id = ?
-                    ");
-                    $stmt->execute([$uid, $animeId]);
-                } else {
-                    $stmt = $pdo->prepare("
-                        UPDATE interactions
-                        SET liked = ?, disliked = ?, watchlisted = ?
-                        WHERE uid = ? AND anime_id = ?
-                    ");
-                    $stmt->execute([$liked, $disliked, $watchlisted, $uid, $animeId]);
-                }
-            }
-
-            header("Location: account.php");
-            exit;
-        } catch (PDOException $e) {
-        }
-    }
-}
-
 try {
     $stmt = $pdo->prepare("
         SELECT uid, username, first_name, last_name, email, created_at
@@ -95,9 +39,9 @@ $likedAnime = [];
 $dislikedAnime = [];
 
 try {
-    /* WATCHLISTED */
+        /* WATCHLISTED */
     $stmt = $pdo->prepare("
-        SELECT a.id, a.title, a.main_picture_url, a.mean
+        SELECT a.id, a.title, a.main_picture_url, a.mean, i.watched
         FROM interactions i
         JOIN anime a ON i.anime_id = a.id
         WHERE i.uid = ? AND i.watchlisted = 1
@@ -106,7 +50,7 @@ try {
     $stmt->execute([$uid]);
     $watchlistedAnime = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    /* LIKED */
+        /* LIKED */
     $stmt = $pdo->prepare("
         SELECT a.id, a.title, a.main_picture_url, a.mean
         FROM interactions i
@@ -117,7 +61,7 @@ try {
     $stmt->execute([$uid]);
     $likedAnime = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    /* DISLIKED */
+        /* DISLIKED */
     $stmt = $pdo->prepare("
         SELECT a.id, a.title, a.main_picture_url, a.mean
         FROM interactions i
@@ -143,54 +87,51 @@ try {
     <title>Account</title>
     <link rel="stylesheet" href="account.css?v=<?php echo time(); ?>">
 </head>
-<script>
-document.addEventListener("click", function (e) {
-    const button = e.target.closest(".watched-btn");
-    if (!button) return;
-
-    button.classList.toggle("watched-active");
-});
-</script>
 <body>
 
-    <section class="video-background">
-        <video src="video/kame-house.mp4" loop muted autoplay></video>
-    </section>
+<section class="video-background">
+    <video src="video/kame-house.mp4" loop muted autoplay></video>
+</section>
 
-    <div class="static-control-bar">
-        <div class="logo">Animeen</div>
-        <div class="nav-links">
-            <a href="HomeUser.php">Home</a>
-            <a href="RankingPage.php">Top Anime</a>
-            <a href="GenrePage.php">Genres</a>
-            <a href="account.php">Account</a>
-            <a href="#">About</a>
-        </div>
+<div class="static-control-bar">
+    <div class="logo">Animeen</div>
+    <div class="nav-links">
+        <a href="HomeUser.php">Home</a>
+        <a href="RankingPage.php">Top Anime</a>
+        <a href="GenrePage.php">Genres</a>
     </div>
+</div>
 
 <main class="account-page">
 
-        <?php if (isset($_SESSION["success_d"])): ?>
-        <div style="display:flex; justify-content:center; align-items:center; margin-bottom:18px;">
-            <div style="background-color:green; padding:15px 30px; color:white; border:1px solid green; font-weight:bold; border-radius:5px; text-align:center;">
-                <?php
-                echo htmlspecialchars($_SESSION["success_d"]);
-                unset($_SESSION["success_d"]);
-                ?>
-            </div>
+    <?php if (isset($_SESSION["success_d"])): ?>
+    <div style="display:flex; justify-content:center; align-items:center; margin-bottom:18px;">
+        <div style="background-color:green; padding:15px 30px; color:white; border:1px solid green; font-weight:bold; border-radius:5px; text-align:center;">
+            <?php
+            echo htmlspecialchars($_SESSION["success_d"]);
+            unset($_SESSION["success_d"]);
+            ?>
         </div>
-        <?php endif; ?>
+    </div>
+    <?php endif; ?>
 
-        <?php if (isset($_SESSION["success_p"])): ?>
-        <div style="display:flex; justify-content:center; align-items:center; margin-bottom:18px;">
-            <div style="background-color:green; padding:15px 30px; color:white; border:1px solid green; font-weight:bold; border-radius:5px; text-align:center;">
-                <?php
-                echo htmlspecialchars($_SESSION["success_p"]);
-                unset($_SESSION["success_p"]);
-                ?>
-            </div>
+    <?php if (isset($_SESSION["success_p"])): ?>
+    <div style="display:flex; justify-content:center; align-items:center; margin-bottom:18px;">
+        <div style="background-color:green; padding:15px 30px; color:white; border:1px solid green; font-weight:bold; border-radius:5px; text-align:center;">
+            <?php
+            echo htmlspecialchars($_SESSION["success_p"]);
+            unset($_SESSION["success_p"]);
+            ?>
         </div>
-        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
+    <div id="interactionMessageWrap"
+         style="display:none; position:fixed; top:90px; left:50%; transform:translateX(-50%); z-index:9999; justify-content:center; align-items:center;">
+        <div id="interactionMessageBox"
+             style="padding:15px 30px; color:white; font-weight:bold; border-radius:5px; text-align:center; min-width:250px;">
+        </div>
+    </div>
 
     <section class="account-panel">
         <h1 class="panel-title">My Account</h1>
@@ -237,125 +178,123 @@ document.addEventListener("click", function (e) {
             <form method="post" action="deletion.php">
                 <button class="action-btn danger-btn" type="submit" name="go_to_delete">Delete Account</button>
             </form>
-
         </div>
-
     </section>
 
-<div class="anime-sections-grid">
+    <div class="anime-sections-grid">
 
-    <section class="account-panel anime-section-panel">
-        <h2 class="panel-title">Watchlisted Anime</h2>
+        <section class="account-panel anime-section-panel">
+            <h2 class="panel-title">Watchlisted Anime</h2>
 
-        <?php if (!empty($watchlistedAnime)): ?>
-            <div class="anime-list">
-                <?php foreach ($watchlistedAnime as $anime): ?>
-                    <div class="anime-row">
-                        <div class="anime-meta">
-                            <img
-                                class="anime-thumb"
-                                src="<?php echo htmlspecialchars(!empty($anime["main_picture_url"]) ? $anime["main_picture_url"] : "images/placeholder1.jpg"); ?>"
-                                alt="<?php echo htmlspecialchars($anime["title"]); ?>"
-                            >
+            <?php if (!empty($watchlistedAnime)): ?>
+                <div class="anime-list">
+                    <?php foreach ($watchlistedAnime as $anime): ?>
+                        <div class="anime-row" data-id="<?php echo (int)$anime["id"]; ?>">
+                            <div class="anime-meta">
+                                <img
+                                    class="anime-thumb"
+                                    src="<?php echo htmlspecialchars(!empty($anime["main_picture_url"]) ? $anime["main_picture_url"] : "images/placeholder1.jpg"); ?>"
+                                    alt="<?php echo htmlspecialchars($anime["title"]); ?>"
+                                >
 
-                            <div class="anime-text">
-                                <a class="anime-link" href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>">
-                                    <?php echo htmlspecialchars($anime["title"]); ?>
-                                </a>
-                                <span class="anime-sub">Mean: <?php echo htmlspecialchars((string)($anime["mean"] ?? "N/A")); ?></span>
+                                <div class="anime-text">
+                                    <a class="anime-link" href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>">
+                                        <?php echo htmlspecialchars($anime["title"]); ?>
+                                    </a>
+                                    <span class="anime-sub">Mean: <?php echo htmlspecialchars((string)($anime["mean"] ?? "N/A")); ?></span>
+                                </div>
+                            </div>
+
+                            <div class="anime-row-actions">
+                                <button class="mini-btn watched-btn <?php echo !empty($anime["watched"]) ? "watched-active" : ""; ?>" type="button">
+                                    Watched
+                                </button>
+
+                                <button class="mini-btn danger-mini-btn remove-btn" type="button" data-action="remove_watchlist">
+                                    Remove
+                                </button>
                             </div>
                         </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p class="empty-text">No watchlisted anime yet.</p>
+            <?php endif; ?>
+        </section>
 
-                        <div class="anime-row-actions">
-                            <button class="mini-btn watched-btn" type="button">Watched</button>
+        <section class="account-panel anime-section-panel">
+            <h2 class="panel-title">Liked Anime</h2>
 
-                            <form method="post">
-                                <input type="hidden" name="anime_id" value="<?php echo (int)$anime["id"]; ?>">
-                                <button class="mini-btn danger-mini-btn" type="submit" name="remove_action" value="remove_watchlist">Remove</button>
-                            </form>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php else: ?>
-            <p class="empty-text">No watchlisted anime yet.</p>
-        <?php endif; ?>
-    </section>
+            <?php if (!empty($likedAnime)): ?>
+                <div class="anime-list">
+                    <?php foreach ($likedAnime as $anime): ?>
+                        <div class="anime-row" data-id="<?php echo (int)$anime["id"]; ?>">
+                            <div class="anime-meta">
+                                <img
+                                    class="anime-thumb"
+                                    src="<?php echo htmlspecialchars(!empty($anime["main_picture_url"]) ? $anime["main_picture_url"] : "images/placeholder1.jpg"); ?>"
+                                    alt="<?php echo htmlspecialchars($anime["title"]); ?>"
+                                >
 
-    <section class="account-panel anime-section-panel">
-        <h2 class="panel-title">Liked Anime</h2>
+                                <div class="anime-text">
+                                    <a class="anime-link" href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>">
+                                        <?php echo htmlspecialchars($anime["title"]); ?>
+                                    </a>
+                                    <span class="anime-sub">Mean: <?php echo htmlspecialchars((string)($anime["mean"] ?? "N/A")); ?></span>
+                                </div>
+                            </div>
 
-        <?php if (!empty($likedAnime)): ?>
-            <div class="anime-list">
-                <?php foreach ($likedAnime as $anime): ?>
-                    <div class="anime-row">
-                        <div class="anime-meta">
-                            <img
-                                class="anime-thumb"
-                                src="<?php echo htmlspecialchars(!empty($anime["main_picture_url"]) ? $anime["main_picture_url"] : "images/placeholder1.jpg"); ?>"
-                                alt="<?php echo htmlspecialchars($anime["title"]); ?>"
-                            >
-
-                            <div class="anime-text">
-                                <a class="anime-link" href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>">
-                                    <?php echo htmlspecialchars($anime["title"]); ?>
-                                </a>
-                                <span class="anime-sub">Mean: <?php echo htmlspecialchars((string)($anime["mean"] ?? "N/A")); ?></span>
+                            <div class="anime-row-actions single-action">
+                                <button class="mini-btn danger-mini-btn remove-btn" type="button" data-action="remove_like">
+                                    Remove
+                                </button>
                             </div>
                         </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p class="empty-text">No liked anime yet.</p>
+            <?php endif; ?>
+        </section>
 
-                        <div class="anime-row-actions single-action">
-                            <form method="post">
-                                <input type="hidden" name="anime_id" value="<?php echo (int)$anime["id"]; ?>">
-                                <button class="mini-btn danger-mini-btn" type="submit" name="remove_action" value="remove_like">Remove</button>
-                            </form>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php else: ?>
-            <p class="empty-text">No liked anime yet.</p>
-        <?php endif; ?>
-    </section>
+        <section class="account-panel anime-section-panel">
+            <h2 class="panel-title">Disliked Anime</h2>
 
-    <section class="account-panel anime-section-panel">
-        <h2 class="panel-title">Disliked Anime</h2>
+            <?php if (!empty($dislikedAnime)): ?>
+                <div class="anime-list">
+                    <?php foreach ($dislikedAnime as $anime): ?>
+                        <div class="anime-row" data-id="<?php echo (int)$anime["id"]; ?>">
+                            <div class="anime-meta">
+                                <img
+                                    class="anime-thumb"
+                                    src="<?php echo htmlspecialchars(!empty($anime["main_picture_url"]) ? $anime["main_picture_url"] : "images/placeholder1.jpg"); ?>"
+                                    alt="<?php echo htmlspecialchars($anime["title"]); ?>"
+                                >
 
-        <?php if (!empty($dislikedAnime)): ?>
-            <div class="anime-list">
-                <?php foreach ($dislikedAnime as $anime): ?>
-                    <div class="anime-row">
-                        <div class="anime-meta">
-                            <img
-                                class="anime-thumb"
-                                src="<?php echo htmlspecialchars(!empty($anime["main_picture_url"]) ? $anime["main_picture_url"] : "images/placeholder1.jpg"); ?>"
-                                alt="<?php echo htmlspecialchars($anime["title"]); ?>"
-                            >
+                                <div class="anime-text">
+                                    <a class="anime-link" href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>">
+                                        <?php echo htmlspecialchars($anime["title"]); ?>
+                                    </a>
+                                    <span class="anime-sub">Mean: <?php echo htmlspecialchars((string)($anime["mean"] ?? "N/A")); ?></span>
+                                </div>
+                            </div>
 
-                            <div class="anime-text">
-                                <a class="anime-link" href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>">
-                                    <?php echo htmlspecialchars($anime["title"]); ?>
-                                </a>
-                                <span class="anime-sub">Mean: <?php echo htmlspecialchars((string)($anime["mean"] ?? "N/A")); ?></span>
+                            <div class="anime-row-actions single-action">
+                                <button class="mini-btn danger-mini-btn remove-btn" type="button" data-action="remove_dislike">
+                                    Remove
+                                </button>
                             </div>
                         </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p class="empty-text">No disliked anime yet.</p>
+            <?php endif; ?>
+        </section>
 
-                        <div class="anime-row-actions single-action">
-                            <form method="post">
-                                <input type="hidden" name="anime_id" value="<?php echo (int)$anime["id"]; ?>">
-                                <button class="mini-btn danger-mini-btn" type="submit" name="remove_action" value="remove_dislike">Remove</button>
-                            </form>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php else: ?>
-            <p class="empty-text">No disliked anime yet.</p>
-        <?php endif; ?>
-    </section>
-
-</div>
+    </div>
 </main>
 
+<script src="interactions.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>
