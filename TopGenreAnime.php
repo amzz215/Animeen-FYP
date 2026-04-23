@@ -1,23 +1,27 @@
 <?php
+// Database connection 
 require_once __DIR__ . "/AnimeenDbConn.php";
 
+// Set pagination defaults and retrieve current page number
 $limit = 100;
 $page = isset($_GET["page"]) ? (int)$_GET["page"] : 1;
 if ($page < 1) $page = 1;
 
 $offset = ($page - 1) * $limit;
 
+// Retrieve selected genre from query string and convert slug into readable format
 $genreSlug = $_GET["genre"] ?? "";
 $genreTitle = ucwords(str_replace("-", " ", $genreSlug));
 
 $animeList = [];
 $totalPages = 1;
 
+// Only run database queries if a genre has been provided
 if ($genreSlug !== "") {
 
     try {
 
-        /* count anime in this genre */
+        // Count how many anime belong to the selected genre so pagination can be calculated
         $countStmt = $pdo->prepare("
             SELECT COUNT(*) AS total
             FROM anime
@@ -29,7 +33,7 @@ if ($genreSlug !== "") {
 
         $totalPages = max(1, ceil($totalRows / $limit));
 
-        /* fetch anime for this page */
+        // Retrieve anime in the selected genre ordered by rank
         $stmt = $pdo->prepare("
             SELECT id, title, main_picture_url, studios, rank
             FROM anime
@@ -45,7 +49,7 @@ if ($genreSlug !== "") {
 
         $stmt->execute();
         $animeList = $stmt->fetchAll();
-
+    // Store a basic error message if genre-based results cannot be loaded
     } catch (PDOException $ex) {
         $error = "Failed to load anime.";
     }
@@ -59,24 +63,28 @@ if ($genreSlug !== "") {
     <link rel="stylesheet" href="TopGenreAnime.css">
 </head>
 
+<!-- External JavaScript used for anime interaction handling -->
 <script src="interactions.js"></script>
 
 <body>
 
-<section>
-    <video src="video/naruto.mp4" loop muted autoplay></video>
-</section>
+    <!-- Background video -->
+    <section>
+        <video src="video/naruto.mp4" loop muted autoplay></video>
+    </section>
 
-<div class="static-control-bar">
-    <div class="logo">Animeen</div>
-    <div class="nav-links">
-        <a href="HomeUser.php">Home</a>
-        <a href="login.php">Login</a>
-        <a href="RankingPage.php">Top Anime</a>
-        <a href="GenrePage.php">Genres</a>
+    <!-- Fixed navigation -->
+    <div class="static-control-bar">
+        <div class="logo">Animeen</div>
+        <div class="nav-links">
+            <a href="HomeUser.php">Home</a>
+            <a href="login.php">Login</a>
+            <a href="RankingPage.php">Top Anime</a>
+            <a href="GenrePage.php">Genres</a>
+        </div>
     </div>
-</div>
 
+<!-- Success message shown after a saved anime interaction -->
 <?php if (isset($_SESSION["interaction_success"])): ?>
 <div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
     <div style="background-color:green; padding:15px 30px; color:white; border:1px solid green; font-weight:bold; border-radius:5px; text-align:center;">
@@ -88,6 +96,7 @@ if ($genreSlug !== "") {
 </div>
 <?php endif; ?>
 
+<!-- Error message shown if an anime interaction fails -->
 <?php if (isset($_SESSION["interaction_error"])): ?>
 <div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
     <div style="background-color:#c0392b; padding:15px 30px; color:white; border:1px solid #c0392b; font-weight:bold; border-radius:5px; text-align:center;">
@@ -99,72 +108,75 @@ if ($genreSlug !== "") {
 </div>
 <?php endif; ?>
 
-<main class="page">
+    <!-- Main content area displaying top anime for the selected genre -->
+    <main class="page">
 
-    <h1 class="page-title">Top Anime — <?php echo htmlspecialchars($genreTitle); ?></h1>
+        <h1 class="page-title">Top Anime — <?php echo htmlspecialchars($genreTitle); ?></h1>
 
-    <div class="grid">
+        <!-- Grid layout displaying anime cards for the selected genre -->
+        <div class="grid">
 
-    <?php foreach ($animeList as $anime): ?>
+        <?php foreach ($animeList as $anime): ?>
 
-    <article class="anime-card" data-id="<?php echo (int)$anime["id"]; ?>">
+        <article class="anime-card" data-id="<?php echo (int)$anime["id"]; ?>">
 
+        <!-- Poster image links through to the individual anime information page -->
+        <a href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>" class="poster-link">
 
-    
+        <div class="poster">
+            <img
+                src="<?php echo htmlspecialchars($anime["main_picture_url"] ?: "images/placeholder1.jpg"); ?>"
+                alt="<?php echo htmlspecialchars($anime["title"]); ?>">
+            </div>
 
-    <a href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>" class="poster-link">
+        </a>
 
-    <div class="poster">
-    <img
-        src="<?php echo htmlspecialchars($anime["main_picture_url"] ?: "images/placeholder1.jpg"); ?>"
-        alt="<?php echo htmlspecialchars($anime["title"]); ?>">
-    </div>
+        <!-- Displays anime title, studio, and rank -->
+        <div class="meta">
+            <h3 class="title"><?php echo htmlspecialchars($anime["title"]); ?></h3>
 
-    </a>
+            <p class="sub">
+                <?php echo htmlspecialchars($anime["studios"] ?? "Unknown Studio"); ?>
+                • Rank: <?php echo htmlspecialchars($anime["rank"]); ?>
+            </p>
+        </div>
 
-    <div class="meta">
-    <h3 class="title"><?php echo htmlspecialchars($anime["title"]); ?></h3>
+        <!-- Interaction buttons allowing the user to watchlist, like, or dislike the anime -->
+        <div class="actions">
+            <button class="btn btn-watchlist">+ Watchlist</button>
+            <button class="btn btn-like">👍</button>
+            <button class="btn btn-dislike">👎</button>
+        </div>
 
-    <p class="sub">
-    <?php echo htmlspecialchars($anime["studios"] ?? "Unknown Studio"); ?>
-    • Rank: <?php echo htmlspecialchars($anime["rank"]); ?>
-    </p>
-    </div>
+        </article>
 
-    <div class="actions">
-    <button class="btn btn-watchlist">+ Watchlist</button>
-    <button class="btn btn-like">👍</button>
-    <button class="btn btn-dislike">👎</button>
-    </div>
+        <?php endforeach; ?>
 
-    </article>
+        </div>
 
-    <?php endforeach; ?>
+        <!-- Pagination controls for moving through genre-based results -->
+        <div style="display:flex; justify-content:center; gap:10px; margin-top:30px;">
 
-    </div>
+        <?php if ($page > 1): ?>
+            <a class="btn" href="?genre=<?php echo urlencode($genreSlug); ?>&page=<?php echo $page-1; ?>">← Previous</a>
+        <?php endif; ?>
 
+        <span style="color:white;">
+            Page <?php echo $page; ?> / <?php echo $totalPages; ?>
+        </span>
 
-    <div style="display:flex; justify-content:center; gap:10px; margin-top:30px;">
+        <?php if ($page < $totalPages): ?>
+            <a class="btn" href="?genre=<?php echo urlencode($genreSlug); ?>&page=<?php echo $page+1; ?>">Next →</a>
+        <?php endif; ?>
 
-    <?php if ($page > 1): ?>
-    <a class="btn" href="?genre=<?php echo urlencode($genreSlug); ?>&page=<?php echo $page-1; ?>">← Previous</a>
-    <?php endif; ?>
+        </div>
 
-    <span style="color:white;">
-    Page <?php echo $page; ?> / <?php echo $totalPages; ?>
-    </span>
+        <!-- Back button returning the user to the main genre list -->
+        <div class="back-row">
+            <a class="back-btn" href="GenrePage.php">← Back to Genres</a>
+        </div>
 
-    <?php if ($page < $totalPages): ?>
-    <a class="btn" href="?genre=<?php echo urlencode($genreSlug); ?>&page=<?php echo $page+1; ?>">Next →</a>
-    <?php endif; ?>
-
-    </div>
-
-    <div class="back-row">
-    <a class="back-btn" href="GenrePage.php">← Back to Genres</a>
-    </div>
-
-</main>
+    </main>
 
 </body>
 </html>

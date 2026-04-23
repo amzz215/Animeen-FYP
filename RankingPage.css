@@ -1,3 +1,4 @@
+/* resets default spacing and sizing of page so video fits correctly */
 * {
   margin: 0;
   padding: 0;
@@ -9,7 +10,7 @@ html, body {
   height: 100%;
 }
 
-/* Background video layer */
+/* Background video layout */
 section {
   position: fixed;
   inset: 0;
@@ -35,7 +36,7 @@ section::after {
   pointer-events: none;
 }
 
-/* Navbar */
+/* Fixed Navbar */
 .static-control-bar {
   position: fixed;
   top: 0;
@@ -177,7 +178,7 @@ section::after {
   padding: 10px 0;
 }
 
-/* show selected states */
+/* Show selected states */
 .anime-card[data-liked="1"] .btn-like {
   background: rgba(255, 255, 255, 0.22);
   border-color: rgba(255, 255, 255, 0.40);

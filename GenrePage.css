@@ -1,3 +1,4 @@
+/* Basic reset to remove default browser spacing and make sizing consistent */
 * {
   margin: 0;
   padding: 0;
@@ -35,7 +36,7 @@ section::after {
   pointer-events: none;
 }
 
-/* Navbar */
+/* Fixed Navbar */
 .static-control-bar {
   position: fixed;
   top: 0;
@@ -76,7 +77,7 @@ section::after {
   color: #fff;
 }
 
-/* Page layout */
+/* Main Page layout */
 .page {
   position: relative;
   z-index: 2;

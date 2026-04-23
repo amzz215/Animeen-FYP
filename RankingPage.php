@@ -1,9 +1,12 @@
 <?php
+// Database connection
 require_once __DIR__ . "/AnimeenDbConn.php";
 
+// Set pagination defaults and retrieve current page number from query string
 $limit = 100;
 $page = isset($_GET["page"]) ? (int)$_GET["page"] : 1;
 
+// Prevent invalid page numbers below 1
 if ($page < 1) {
     $page = 1;
 }
@@ -14,7 +17,9 @@ $animeList = [];
 $error = "";
 $totalPages = 1;
 
+// Retrieve ranked anime and calculate pagination values
 try {
+    // Count total ranked anime so the total number of pages can be calculated
     $countStmt = $pdo->prepare("
         SELECT COUNT(*) AS total
         FROM anime
@@ -25,11 +30,13 @@ try {
 
     $totalPages = max(1, (int)ceil($totalRows / $limit));
 
+    // Adjust page and offset if requested page exceeds the total number of pages
     if ($page > $totalPages) {
         $page = $totalPages;
         $offset = ($page - 1) * $limit;
     }
 
+    // Retrieve anime ordered by rank for the current page
     $stmt = $pdo->prepare("
         SELECT
             id,
@@ -49,6 +56,7 @@ try {
     $animeList = $stmt->fetchAll();
 
 } catch (PDOException $ex) {
+    // Store error message if anime data cannot be loaded
     $error = "Failed to load anime from the database.";
 }
 ?>
@@ -59,19 +67,21 @@ try {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top Anime</title>
-
     <link rel="stylesheet" href="RankingPage.css">
 </head>
 
+<!-- External scripts used for anime interaction handling and page behaviour -->
 <script src="interactions.js"></script>
 <script src="RankingPage.js"></script>
 
 <body>
 
+<!-- Background video -->
 <section>
     <video src="video/naruto.mp4" loop muted autoplay></video>
 </section>
 
+<!-- Fixed navigation bar for quick access to other pages -->
 <div class="static-control-bar">
     <div class="logo">Animeen</div>
     <div class="nav-links">
@@ -81,6 +91,7 @@ try {
     </div>
 </div>
 
+<!-- Success message shown after a saved anime interaction -->
 <?php if (isset($_SESSION["interaction_success"])): ?>
 <div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
     <div style="background-color:green; padding:15px 30px; color:white; border:1px solid green; font-weight:bold; border-radius:5px; text-align:center;">
@@ -92,6 +103,7 @@ try {
 </div>
 <?php endif; ?>
 
+<!-- Error message shown if an anime interaction fails -->
 <?php if (isset($_SESSION["interaction_error"])): ?>
 <div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
     <div style="background-color:#c0392b; padding:15px 30px; color:white; border:1px solid #c0392b; font-weight:bold; border-radius:5px; text-align:center;">
@@ -103,19 +115,23 @@ try {
 </div>
 <?php endif; ?>
 
+<!-- Main content area for displaying the ranked anime list -->
 <main class="page">
     <h1 class="page-title">Browse Highest Rated Anime</h1>
 
+    <!-- Displays database error message if anime data fails to load -->
     <?php if (!empty($error)): ?>
         <p class="sub" style="color: white; margin-bottom: 20px;">
             <?php echo htmlspecialchars($error); ?>
         </p>
     <?php endif; ?>
 
+    <!-- Grid layout used to display anime cards -->
     <div class="grid">
         <?php foreach ($animeList as $anime): ?>
             <article class="anime-card" data-id="<?php echo (int)$anime["id"]; ?>">
 
+                <!-- Poster image links through to the individual anime information page -->
                 <a href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>" class="poster-link">
                     <div class="poster">
                         <img
@@ -125,6 +141,7 @@ try {
                     </div>
                 </a>
 
+                <!-- Displays the anime title, studio, and rank -->
                 <div class="meta">
                     <h3 class="title"><?php echo htmlspecialchars($anime["title"]); ?></h3>
                     <p class="sub">
@@ -133,6 +150,7 @@ try {
                     </p>
                 </div>
 
+                <!-- Interaction buttons allowing the user to watchlist, like, or dislike an anime -->
                 <div class="actions">
                     <button class="btn btn-watchlist" type="button">+ Watchlist</button>
                     <button class="btn btn-like" type="button">👍</button>
@@ -142,6 +160,7 @@ try {
         <?php endforeach; ?>
     </div>
 
+    <!-- Pagination controls for moving between ranked anime pages -->
     <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-top:30px; flex-wrap:wrap;">
 
         <?php if ($page > 1): ?>

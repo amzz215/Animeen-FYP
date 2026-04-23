@@ -1,7 +1,9 @@
 <?php
+// Initialise session and database connection
 session_start();
 require_once __DIR__ . "/AnimeenDbConn.php";
 
+// Restrict access to logged-in users only if not they are sent to the home page
 if (!isset($_SESSION["uid"])) {
     header("Location: Home.php");
     exit;
@@ -12,6 +14,7 @@ $error = "";
 $success = "";
 $user = null;
 
+// Retrieve the current user's existing account details
 try {
     $stmt = $pdo->prepare("
         SELECT username, first_name, last_name, email
@@ -30,16 +33,19 @@ try {
     $error = "Unable to load your details.";
 }
 
+// Handle form submission for updating account details
 if (isset($_POST["save_details"])) {
     $username = trim($_POST["username"] ?? "");
     $firstName = trim($_POST["first_name"] ?? "");
     $lastName = trim($_POST["last_name"] ?? "");
     $email = trim($_POST["email"] ?? "");
 
+    // Validate that all fields have been completed
     if ($username === "" || $firstName === "" || $lastName === "" || $email === "") {
         $error = "Please fill in all fields.";
     } else {
         try {
+            // Check whether the username or email is already being used by another user
             $stmt = $pdo->prepare("
                 SELECT uid
                 FROM users
@@ -52,6 +58,7 @@ if (isset($_POST["save_details"])) {
             if ($existing) {
                 $error = "That username or email is already in use.";
             } else {
+                // Update the user's account details in the database
                 $stmt = $pdo->prepare("
                     UPDATE users
                     SET username = ?, first_name = ?, last_name = ?, email = ?
@@ -60,6 +67,7 @@ if (isset($_POST["save_details"])) {
                 ");
                 $stmt->execute([$username, $firstName, $lastName, $email, $uid]);
 
+                // Store success message and return user to account page
                 $_SESSION["success_d"] = "Details updated successfully.";
                 header("Location: account.php");
                 exit;
@@ -90,60 +98,66 @@ if (isset($_POST["save_details"])) {
 </head>
 <body>
 
-    <section class="video-background">
-        <video src="video/kame-house.mp4" loop muted autoplay></video>
-    </section>
+<!-- Background video -->
+<section class="video-background">
+    <video src="video/kame-house.mp4" loop muted autoplay></video>
+</section>
 
-    <div class="static-control-bar">
-        <div class="logo">Animeen</div>
-        <div class="nav-links">
-            <a href="HomeUser.php">Home</a>
-            <a href="RankingPage.php">Top Anime</a>
-            <a href="GenrePage.php">Genres</a>
-            <a href="account.php">Account</a>
-        </div>
+<!-- Fixed navigation -->
+<div class="static-control-bar">
+    <div class="logo">Animeen</div>
+    <div class="nav-links">
+        <a href="HomeUser.php">Home</a>
+        <a href="RankingPage.php">Top Anime</a>
+        <a href="GenrePage.php">Genres</a>
+        <a href="account.php">Account</a>
     </div>
+</div>
 
-    <main class="account-page">
-        <section class="account-panel" style="max-width: 800px; margin: 0 auto;">
-            <h1 class="panel-title">Update Details</h1>
+<main class="account-page">
+    <!-- Main panel containing the account details update form -->
+    <section class="account-panel" style="max-width: 800px; margin: 0 auto;">
+        <h1 class="panel-title">Update Details</h1>
 
-            <?php if ($error !== ""): ?>
-                <div style="display:flex; justify-content:center; align-items:center; margin-bottom:18px;">
-                    <div style="background-color:#c0392b; padding:15px 30px; color:white; border:1px solid #c0392b; font-weight:bold; border-radius:5px; text-align:center;">
-                        <?php echo htmlspecialchars($error); ?>
-                    </div>
+        <!-- Displays an error message if validation or database update fails -->
+        <?php if ($error !== ""): ?>
+            <div style="display:flex; justify-content:center; align-items:center; margin-bottom:18px;">
+                <div style="background-color:#c0392b; padding:15px 30px; color:white; border:1px solid #c0392b; font-weight:bold; border-radius:5px; text-align:center;">
+                    <?php echo htmlspecialchars($error); ?>
                 </div>
-            <?php endif; ?>
+            </div>
+        <?php endif; ?>
 
-            <form method="post" style="display:grid; gap:16px;">
-                <div class="detail-box">
-                    <span class="detail-label">Username</span>
-                    <input type="text" name="username" value="<?php echo htmlspecialchars($user["username"] ?? ""); ?>" style="padding:12px; border-radius:12px; border:none; outline:none;">
-                </div>
+        <!-- Form allowing user to edit their account information -->
+        <form method="post" style="display:grid; gap:16px;">
+            <div class="detail-box">
+                <span class="detail-label">Username</span>
+                <input type="text" name="username" value="<?php echo htmlspecialchars($user["username"] ?? ""); ?>" style="padding:12px; border-radius:12px; border:none; outline:none;">
+            </div>
 
-                <div class="detail-box">
-                    <span class="detail-label">First Name</span>
-                    <input type="text" name="first_name" value="<?php echo htmlspecialchars($user["first_name"] ?? ""); ?>" style="padding:12px; border-radius:12px; border:none; outline:none;">
-                </div>
+            <div class="detail-box">
+                <span class="detail-label">First Name</span>
+                <input type="text" name="first_name" value="<?php echo htmlspecialchars($user["first_name"] ?? ""); ?>" style="padding:12px; border-radius:12px; border:none; outline:none;">
+            </div>
 
-                <div class="detail-box">
-                    <span class="detail-label">Last Name</span>
-                    <input type="text" name="last_name" value="<?php echo htmlspecialchars($user["last_name"] ?? ""); ?>" style="padding:12px; border-radius:12px; border:none; outline:none;">
-                </div>
+            <div class="detail-box">
+                <span class="detail-label">Last Name</span>
+                <input type="text" name="last_name" value="<?php echo htmlspecialchars($user["last_name"] ?? ""); ?>" style="padding:12px; border-radius:12px; border:none; outline:none;">
+            </div>
 
-                <div class="detail-box">
-                    <span class="detail-label">Email</span>
-                    <input type="email" name="email" value="<?php echo htmlspecialchars($user["email"] ?? ""); ?>" style="padding:12px; border-radius:12px; border:none; outline:none;">
-                </div>
+            <div class="detail-box">
+                <span class="detail-label">Email</span>
+                <input type="email" name="email" value="<?php echo htmlspecialchars($user["email"] ?? ""); ?>" style="padding:12px; border-radius:12px; border:none; outline:none;">
+            </div>
 
-                <div class="account-actions">
-                    <button class="action-btn" type="submit" name="save_details">Save Changes</button>
-                    <a class="action-btn" href="account.php">Cancel</a>
-                </div>
-            </form>
-        </section>
-    </main>
+            <!-- Form actions allowing the user to save changes or cancel -->
+            <div class="account-actions">
+                <button class="action-btn" type="submit" name="save_details">Save Changes</button>
+                <a class="action-btn" href="account.php">Cancel</a>
+            </div>
+        </form>
+    </section>
+</main>
 
 </body>
 </html>

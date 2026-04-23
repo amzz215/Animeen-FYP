@@ -1,9 +1,11 @@
+/* Resets default browser spacing so the layout is easier to control */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Allows the page to take up the full browser width and height */
 html,
 body {
     width: 100%;
@@ -19,7 +21,7 @@ body {
     font-family: Arial, sans-serif;
 }
 
-/* navbar */
+/* Fixed navigation bar at the top of the page */
 .static-control-bar {
     position: fixed;
     top: 0;
@@ -36,6 +38,7 @@ body {
     -webkit-backdrop-filter: blur(10px);
 }
 
+/* Adds an extra dark layer behind the navigation bar */
 .static-control-bar::before {
     content: "";
     position: absolute;
@@ -45,17 +48,20 @@ body {
     z-index: -1;
 }
 
+/* Keeps navbar content above the dark overlay */
 .static-control-bar > * {
     position: relative;
     z-index: 1;
 }
 
+/* Logo styling */
 .logo {
     color: #fff;
     font-weight: 700;
     font-size: 18px;
 }
 
+/* Navigation link layout */
 .nav-links {
     display: flex;
     gap: 18px;
@@ -72,7 +78,7 @@ body {
     color: #fff;
 }
 
-/* background */
+/* Full-screen background video, stays under all the content */
 .video-background {
     position: fixed;
     inset: 0;
@@ -90,6 +96,7 @@ body {
     transform: translate(-50%, -50%);
 }
 
+/* Slightly darkens the background video so text is easier to read */
 .video-background::after {
     content: "";
     position: absolute;
@@ -98,7 +105,7 @@ body {
     pointer-events: none;
 }
 
-/* page */
+/* Main account page container */
 .account-page {
     position: relative;
     z-index: 2;
@@ -108,7 +115,7 @@ body {
     gap: 22px;
 }
 
-/* panels */
+/* Glass-style panels used for account and anime sections */
 .account-panel {
     padding: 22px;
     border-radius: 30px;
@@ -127,7 +134,7 @@ body {
     line-height: 1.1;
 }
 
-/* account details */
+/* Grid layout for displaying the user's account details */
 .details-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -158,7 +165,7 @@ body {
     word-break: break-word;
 }
 
-/* buttons */
+/* Account action buttons such as update, logout, and delete */
 .account-actions {
     margin-top: 22px;
     display: flex;
@@ -186,6 +193,7 @@ body {
     background: rgba(255, 255, 255, 0.18);
 }
 
+/* Red styling for destructive actions such as account deletion */
 .danger-btn {
     background: rgba(160, 35, 35, 0.78);
 }
@@ -194,7 +202,7 @@ body {
     background: rgba(180, 40, 40, 0.92);
 }
 
-/* 3 side-by-side anime sections */
+/* Displays watchlisted, liked, and disliked anime in three columns */
 .anime-sections-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -206,7 +214,7 @@ body {
     min-width: 0;
 }
 
-/* anime list/cards */
+/* Anime list layout inside each account section */
 .anime-list {
     display: grid;
     gap: 16px;
@@ -222,6 +230,7 @@ body {
     min-width: 0;
 }
 
+/* Anime image and text layout */
 .anime-meta {
     display: flex;
     align-items: center;
@@ -263,6 +272,7 @@ body {
     word-break: break-word;
 }
 
+/* Buttons used inside each anime row */
 .anime-row-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -285,6 +295,7 @@ body {
     background: rgba(255, 255, 255, 0.18);
 }
 
+/* Red styling for remove buttons */
 .danger-mini-btn {
     background: rgba(160, 35, 35, 0.78);
 }
@@ -297,12 +308,13 @@ body {
     color: rgba(255, 255, 255, 0.82);
 }
 
+/* Active button state used for selected interactions */
 .btn.active {
     background: rgba(255, 255, 255, 0.28);
     border-color: rgba(255, 255, 255, 0.45);
 }
 
-/* mobile only */
+/* Mobile layout so panels stack vertically on smaller screens */
 @media (max-width: 700px) {
     .account-page {
         width: min(100% - 20px, 1800px);
@@ -339,16 +351,19 @@ body {
     }
 }
 
+/* Removes default form spacing inside anime row buttons */
 .anime-row-actions form {
     margin: 0;
 }
 
+/* Green state used when an anime is marked as watched */
 .watched-active {
     background: green !important;
     border-color: green !important;
     color: #fff !important;
 }
 
+/* Makes single-action rows keep the same button layout */
 .anime-row-actions.single-action {
     grid-template-columns: 1fr;
 }

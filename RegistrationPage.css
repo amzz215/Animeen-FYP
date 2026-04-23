@@ -1,3 +1,4 @@
+/* resets default spacing and sizing of page so video fits correctly */
 * {
     margin: 0;
     padding: 0;
@@ -9,7 +10,7 @@ html, body {
     height: 100%;
 }
 
-/* Background video */
+/* Background video layout */
 section {
     position: fixed;
     inset: 0;
@@ -34,7 +35,7 @@ section::after {
     background: rgba(0, 0, 0, 0.35);
 }
 
-/* Navbar */
+/* Fixed Navbar */
 .static-control-bar {
     position: fixed;
     top: 0;
@@ -74,7 +75,7 @@ section::after {
     color: #fff;
 }
 
-/* Page */
+/* Main Page layout */
 .auth-page {
     position: relative;
     z-index: 2;
@@ -102,7 +103,7 @@ section::after {
     margin-bottom: 18px;
 }
 
-/* Error */
+/* Error messages */
 .error {
     color: #ffb4b4;
     font-size: 13px;
@@ -110,7 +111,7 @@ section::after {
     margin-bottom: 12px;
 }
 
-/* Form */
+/* Form layout */
 .auth-form {
     display: grid;
     gap: 14px;

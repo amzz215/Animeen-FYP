@@ -1,9 +1,12 @@
+// Initialise session and database connection
 <?php
 session_start();
 require_once __DIR__ . "/AnimeenDbConn.php";
 
+// Initialise array that will store genre names and their related images
 $genres = [];
 
+// Retrieve all distinct genres from the anime table and pair each one with the top-ranked anime image
 try {
     $stat = $pdo->query("
         SELECT DISTINCT TRIM(
@@ -21,6 +24,7 @@ try {
 
     $genreNames = $stat->fetchAll(PDO::FETCH_COLUMN);
 
+    // Retrieve the top-ranked anime image for each genre
     $imageStat = $pdo->prepare("
         SELECT main_picture_url
         FROM anime
@@ -42,6 +46,7 @@ try {
         ];
     }
 
+// Fallback to an empty list if genre data cannot be retrieved
 } catch (PDOException $ex) {
     $genres = [];
 }
@@ -58,10 +63,12 @@ try {
 
 <body>
 
+<!-- Background video -->
 <section>
     <video src="video/naruto.mp4" loop muted autoplay></video>
 </section>
 
+<!-- Fixed navigation bar for moving between main pages -->
 <div class="static-control-bar">
     <div class="logo">Animeen</div>
 
@@ -72,18 +79,21 @@ try {
     </div>
 </div>
 
-
+<!-- Main content section displaying all available anime genres -->
 <main class="page">
     <h1 class="page-title">All Genres</h1>
 
+    <!-- Grid layout used to display genre cards -->
     <div class="grid genre-grid">
         <?php foreach ($genres as $genre): ?>
             <?php
+            // Create variables for genre name, URL slug, and image
             $name = $genre["name"];
             $slug = strtolower(str_replace(" ", "-", $name));
             $image = $genre["image"];
             ?>
 
+            <!-- Each card links to a page showing top anime from the selected genre -->
             <a
                 class="genre-card"
                 href="TopGenreAnime.php?genre=<?php echo urlencode($slug); ?>"

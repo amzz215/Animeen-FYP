@@ -1,5 +1,5 @@
 <?php
-// AnimeenDbConn.php
+// Animeen Database Connection Script using PDO
 
 $host = "127.0.0.1";
 $dbname = "animeen_db";

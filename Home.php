@@ -1,9 +1,12 @@
 <?php
+// Initialise session and database connection
 session_start();
 require_once __DIR__ . "/AnimeenDbConn.php";
 
+// Initialise array that will store all available genres
 $genres = [];
 
+// Retrieve distinct genre names from the anime table
 try {
     $stat = $pdo->query("
         SELECT DISTINCT TRIM(
@@ -21,6 +24,7 @@ try {
 
     $genres = $stat->fetchAll(PDO::FETCH_COLUMN);
 } catch (PDOException $ex) {
+    // Fallback to an empty array if genre retrieval fails
     $genres = [];
 }
 ?>
@@ -35,10 +39,12 @@ try {
 </head>
 <body>
 
+<!-- Background video -->
 <section class="video-background">
     <video src="video/kame-house.mp4" loop muted autoplay></video>
 </section>
 
+<!-- Fixed navigation bar -->
 <div class="static-control-bar">
     <div class="logo">Animeen</div>
 
@@ -50,6 +56,7 @@ try {
     </div>
 </div>
 
+<!-- Success message displayed after a user logs in -->
 <?php if (isset($_SESSION["loggedin"])): ?>
     <div class="flash-wrap">
         <div class="flash-success">
@@ -61,6 +68,7 @@ try {
     </div>
 <?php endif; ?>
 
+<!-- Main hero section containing the anime search bar -->
 <main class="hero-content">
     <div class="search-container">
         <form class="search-bar" id="searchForm" method="get" action="Recommendations.php">
@@ -78,8 +86,10 @@ try {
     </div>
 </main>
 
+<!-- Overlay shown when the filter drawer is opened -->
 <div class="drawer-overlay" id="drawerOverlay"></div>
 
+<!-- Side drawer allowing users to filter anime by genre -->
 <aside class="filter-drawer" id="filterDrawer" aria-hidden="true">
     <div class="drawer-header">
         <h2>Filters</h2>
@@ -105,12 +115,14 @@ try {
         </div>
     </div>
 
+    <!-- Drawer action buttons for clearing and applying selected filters -->
     <div class="drawer-actions">
         <button class="clear-filters" type="button" id="clearFilters">Clear</button>
         <button class="apply-filters" type="submit" form="searchForm">Apply</button>
     </div>
 </aside>
 
+<!-- About Us section describing the purpose and features -->
 <section class="about-section" id="about">
     <div class="about-container">
         <div class="about-left">
@@ -129,6 +141,7 @@ try {
             </p>
         </div>
 
+        <!-- Additional navigation links -->
         <div class="about-right">
             <div class="about-links-group">
                 <h3>Project Overview</h3>
@@ -147,6 +160,7 @@ try {
     </div>
 </section>
 
+<!-- Footer section -->
 <footer class="site-footer">
     <div class="footer-inner">
         <p>© 2026 Animeen</p>
@@ -158,6 +172,7 @@ try {
     </div>
 </footer>
 
+<!-- External JavaScript used for homepage interactions -->
 <script src="Home.js?v=<?php echo time(); ?>"></script>
 <!-- <script src="Home.js"></script> -->
 </body>

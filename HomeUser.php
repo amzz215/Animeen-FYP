@@ -1,4 +1,5 @@
 <?php
+// Initialise session and ensure the user is logged in before accessing the page
 session_start();
 
 if (!isset($_SESSION["uid"])) {
@@ -6,10 +7,13 @@ if (!isset($_SESSION["uid"])) {
     exit;
 }
 
+// Include database connection
 require_once __DIR__ . "/AnimeenDbConn.php";
 
+// Initialise array to store available genres
 $genres = [];
 
+// Retrieve all distinct genres from the anime table for the filter drawer
 try {
     $stat = $pdo->query("
         SELECT DISTINCT TRIM(
@@ -28,6 +32,7 @@ try {
     $genres = $stat->fetchAll(PDO::FETCH_COLUMN);
 
 } catch (PDOException $ex) {
+    // Fallback to an empty genre list if the query fails
     $genres = [];
 }
 ?>
@@ -44,10 +49,12 @@ try {
 
 <body>
 
+<!-- Background video -->
 <section class="video-background">
     <video src="video/kame-house.mp4" loop muted autoplay></video>
 </section>
 
+<!-- Fixed navigation bar -->
 <div class="static-control-bar">
     <div class="logo">Animeen</div>
 
@@ -59,6 +66,7 @@ try {
     </div>
 </div>
 
+<!-- Success message displayed after login -->
 <?php if (isset($_SESSION["loggedin"])): ?>
     <div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
         <div style="background-color:green; padding:15px 30px; color:white; border:1px solid green; font-weight:bold; border-radius:5px; text-align:center;">
@@ -70,6 +78,7 @@ try {
     </div>
 <?php endif; ?>
 
+<!-- Main search area allowing users to search for anime -->
 <div class="search-container">
     <form class="search-bar" id="searchForm" method="get" action="Recommendations.php">
         <input
@@ -85,8 +94,10 @@ try {
     </form>
 </div>
 
+<!-- Overlay shown when the filter drawer is opened -->
 <div class="drawer-overlay" id="drawerOverlay"></div>
 
+<!-- Filter drawer allowing the user to narrow searches by genre -->
 <aside class="filter-drawer" id="filterDrawer" aria-hidden="true">
     <div class="drawer-header">
         <h2>Filters</h2>
@@ -112,12 +123,12 @@ try {
         </div>
     </div>
 
+    <!-- Drawer action buttons for clearing and applying filters -->
     <div class="drawer-actions">
         <button class="clear-filters" type="button" id="clearFilters">Clear</button>
         <button class="apply-filters" type="submit" form="searchForm">Apply</button>
     </div>
 </aside>
-
 <!-- <section class="about-section" id="about">
     <div class="about-container">
         <div class="about-left">
@@ -165,6 +176,7 @@ try {
     </div>
 </footer> -->
 
+<!-- External JavaScript used for homepage interactions -->
 <script src="Home.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

@@ -1,13 +1,14 @@
+/* Resets default browser spacing and keeps sizing easier to manage */
 * { 
   margin: 0; 
   padding: 0; 
   box-sizing: border-box; 
 }
 
+/* Sets full-page sizing and the main font used across the page */
 html, body {
   width: 100%;
   height: 100%;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
 /* Background video */
@@ -18,6 +19,7 @@ section {
   overflow: hidden;
 }
 
+/* Makes the background video fill the whole screen */
 section video {
   position: absolute;
   top: 50%;
@@ -28,6 +30,7 @@ section video {
   transform: translate(-50%, -50%);
 }
 
+/* Darkens the video slightly so page content is easier to read */
 section::after{
   content:"";
   position:absolute;
@@ -54,8 +57,10 @@ section::after{
   border-bottom: 1px solid rgba(255,255,255,0.12);
 }
 
+/* Logo styling */
 .logo { color:#fff; font-weight:700; font-size:18px; }
 
+/* Navigation links layout */
 .nav-links { display:flex; gap:18px; }
 
 .nav-links a,
@@ -76,6 +81,7 @@ section::after{
   place-items: center;
 }
 
+/* Main anime information card */
 .info-card{
   width: min(1100px, 95vw);
   display: grid;
@@ -91,6 +97,7 @@ section::after{
   box-shadow: 0 18px 40px rgba(0,0,0,0.25);
 }
 
+/* Poster image styling */
 .info-poster img{
   width: 100%;
   border-radius: 18px;
@@ -98,12 +105,14 @@ section::after{
   object-fit: cover;
 }
 
+/* Anime title styling */
 .info-title{
   color: #fff;
   font-size: 34px;
   margin-bottom: 10px;
 }
 
+/* Separates each information block inside the card */
 .info-section{
   margin-top: 14px;
 }
@@ -120,6 +129,7 @@ section::after{
   font-size: 14px;
 }
 
+/* Interaction buttons such as watchlist, like, and dislike */
 .info-actions{
   margin-top: 16px;
   display: flex;
@@ -142,12 +152,14 @@ section::after{
   border-color: rgba(255,255,255,0.32);
 }
 
+/* Trailer embed styling */
 .trailer iframe{
   width: 100%;
   aspect-ratio: 16 / 9;
   border-radius: 14px;
 }
 
+/* Back link styling */
 .back-link{
   display: inline-block;
   margin-top: 16px;
@@ -159,6 +171,7 @@ section::after{
   text-decoration: underline;
 }
 
+/* Active state used when an interaction button has been selected */
 .btn.active {
     background: rgba(255, 255, 255, 0.28);
     border-color: rgba(255, 255, 255, 0.45);

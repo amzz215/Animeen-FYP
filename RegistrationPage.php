@@ -1,8 +1,11 @@
 <?php
+// Start session
 session_start();
 
+// Handle registration form submission
 if (isset($_POST["register"])) {
 
+    // Check that all required registration fields have been submitted
     if (!isset($_POST["email"], $_POST["username"], $_POST["first_name"], $_POST["last_name"], $_POST["password"])) {
         $_SESSION["failedregistration"] = "Please fill in all registration fields.";
         header("Location: RegistrationPage.php");
@@ -15,16 +18,19 @@ if (isset($_POST["register"])) {
     $last_name = trim($_POST["last_name"]);
     $password = $_POST["password"];
 
+    // Validate email format before attempting to register the user
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $_SESSION["failedregistration"] = "Invalid Email address.";
         header("Location: RegistrationPage.php");
         exit;
     }
 
+    // Database connection 
     require_once __DIR__ . "/AnimeenDbConn.php";
 
     try {
 
+        // Check whether the email or username is already being used
         $check = $pdo->prepare("SELECT uid FROM users WHERE email = ? OR username = ?");
         $check->execute([$email, $username]);
 
@@ -34,8 +40,10 @@ if (isset($_POST["register"])) {
             exit;
         }
 
+        // Hash the password before saving the new user to the database
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
+        // Insert the new user into the users table
         $stat = $pdo->prepare("
             INSERT INTO users (username, first_name, last_name, password, email, created_at)
             VALUES (:username, :first_name, :last_name, :password, :email, NOW())
@@ -49,6 +57,7 @@ if (isset($_POST["register"])) {
 
         $stat->execute();
 
+        // Store newly created user details in session and log them in immediately
         $uid = $pdo->lastInsertId();
 
         $_SESSION["uid"] = $uid;
@@ -60,6 +69,7 @@ if (isset($_POST["register"])) {
         exit;
 
     } catch (PDOException $ex) {
+        // Display a system error if registration cannot be completed
         $_SESSION["systemfailure"] = "Database error occurred.";
         header("Location: RegistrationPage.php");
         exit;
@@ -73,7 +83,6 @@ if (isset($_POST["register"])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-
     <link rel="stylesheet" href="RegistrationPage.css">
 </head>
 
@@ -95,6 +104,7 @@ if (isset($_POST["register"])) {
     </div>
 </div>
 
+<!-- Error message shown if registration fields are incomplete or email format is invalid -->
 <?php if (isset($_SESSION["failedregistration"])): ?>
     <div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
         <div style="background-color:red; padding:15px 30px; color:white; border:1px solid red; font-weight:bold; border-radius:5px; text-align:center;">
@@ -106,6 +116,7 @@ if (isset($_POST["register"])) {
     </div>
 <?php endif; ?>
 
+<!-- Error message shown if the username or email already exists -->
 <?php if (isset($_SESSION["failedregistration2"])): ?>
     <div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
         <div style="background-color:red; padding:15px 30px; color:white; border:1px solid red; font-weight:bold; border-radius:5px; text-align:center;">
@@ -117,6 +128,7 @@ if (isset($_POST["register"])) {
     </div>
 <?php endif; ?>
 
+<!-- Error message shown if a system or database issue occurs -->
 <?php if (isset($_SESSION["systemfailure"])): ?>
     <div style="display:flex; justify-content:center; align-items:center; margin-top:90px; position:relative; z-index:20;">
         <div style="background-color:red; padding:15px 30px; color:white; border:1px solid red; font-weight:bold; border-radius:5px; text-align:center;">
@@ -128,12 +140,13 @@ if (isset($_POST["register"])) {
     </div>
 <?php endif; ?>
 
-<!-- Page -->
+<!-- Main registration form section -->
 <main class="auth-page">
     <div class="auth-card">
 
         <h2>Create Account</h2>
 
+        <!-- Form allowing new users to create an account -->
         <form method="post" action="RegistrationPage.php" class="auth-form">
             <div class="input-field">
                 <input type="email" name="email" required>
@@ -165,6 +178,7 @@ if (isset($_POST["register"])) {
             </button>
         </form>
 
+        <!-- Link for users who already have an account -->
         <p class="switch-link">
             Already have an account?
             <a href="login.php">Login here</a>
