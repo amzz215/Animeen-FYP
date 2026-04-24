@@ -226,7 +226,7 @@ def insert_into_mysql(anime_list):
     cursor.close()
     conn.close()
 
-    print(f"Inserted/updated {inserted} anime entries into the anime table.")
+    print(f"Inserted and updated {inserted} anime entries into the anime table.")
 
 
 # Runs the full script, saving it to CSV, and inserting it into MySQL/database
