@@ -155,7 +155,7 @@ if (isset($_POST["login"])) {
 
                 <!-- Link provided for users who need to recover or change password -->
                 <div class="forget">
-                    <a href="password.php">Forgotten password?</a>
+                    <a href="passwordForget.php">Forgotten password?</a>
                 </div>
 
                 <button class="input-button" type="submit" name="login">
