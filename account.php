@@ -186,7 +186,7 @@ try {
                                     <a class="anime-link" href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>">
                                         <?php echo htmlspecialchars($anime["title"]); ?>
                                     </a>
-                                    <span>Mean: <?php echo htmlspecialchars($anime["mean"]); ?></span>
+                                    <span class="anime-sub">Mean: <?php echo htmlspecialchars($anime["mean"]); ?></span>
                                 </div>
                             </div>
 
@@ -219,10 +219,10 @@ try {
                             <div class="anime-meta">
                                 <img class="anime-thumb" src="<?php echo htmlspecialchars($anime["main_picture_url"]); ?>">
                                 <div class="anime-text">
-                                    <a href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>">
+                                    <a class="anime-link" href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>">
                                         <?php echo htmlspecialchars($anime["title"]); ?>
                                     </a>
-                                    <span>Mean: <?php echo htmlspecialchars($anime["mean"]); ?></span>
+                                    <span class="anime-sub">Mean: <?php echo htmlspecialchars($anime["mean"]); ?></span>
                                 </div>
                             </div>
 
@@ -250,10 +250,10 @@ try {
                             <div class="anime-meta">
                                 <img class="anime-thumb" src="<?php echo htmlspecialchars($anime["main_picture_url"]); ?>">
                                 <div class="anime-text">
-                                    <a href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>">
+                                    <a class="anime-link" href="AnimeInfo.php?anime=<?php echo (int)$anime["id"]; ?>">
                                         <?php echo htmlspecialchars($anime["title"]); ?>
                                     </a>
-                                    <span>Mean: <?php echo htmlspecialchars($anime["mean"]); ?></span>
+                                    <span class="anime-sub">Mean: <?php echo htmlspecialchars($anime["mean"]); ?></span>
                                 </div>
                             </div>
 
