@@ -129,52 +129,6 @@ try {
         <button class="apply-filters" type="submit" form="searchForm">Apply</button>
     </div>
 </aside>
-<!-- <section class="about-section" id="about">
-    <div class="about-container">
-        <div class="about-left">
-            <h2 class="about-title">About Animeen</h2>
-
-            <p class="about-text">
-                Animeen is an anime discovery platform built to help users search, explore, and organise anime in one place.
-                Whether you want to browse top-ranked titles, explore by genre, or search for personalised recommendations,
-                Animeen is designed to make anime discovery feel streamlined and engaging.
-            </p>
-
-            <p class="about-text">
-                The project combines anime browsing, filtering, recommendation functionality, and account-based interaction
-                systems such as watchlisting, liking, and disliking. The aim is to create a modern, user-focused anime platform
-                with both strong functionality and a polished visual experience.
-            </p>
-        </div>
-
-        <div class="about-right">
-            <div class="about-links-group">
-                <h3>Project Overview</h3>
-                <a href="#about">About</a>
-                <a href="Recommendations.php?title=Naruto">Recommendations</a>
-                <a href="RankingPage.php">Top Anime</a>
-                <a href="GenrePage.php">Genres</a>
-            </div>
-
-            <div class="about-links-group">
-                <h3>Let’s Chat</h3>
-                <a href="#">Feedback</a>
-                <a href="#">Contact</a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<footer class="site-footer">
-    <div class="footer-inner">
-        <p>© 2026 Animeen</p>
-
-        <div class="footer-links">
-            <a href="#">Terms</a>
-            <a href="#">Privacy</a>
-        </div>
-    </div>
-</footer> -->
 
 <!-- External JavaScript used for homepage interactions -->
 <script src="Home.js?v=<?php echo time(); ?>"></script>
